@@ -19,4 +19,11 @@ class E02Test extends FunSuite {
     def curriedMult = curry(mult)
     assertEquals(mult(2, 3), curriedMult(2)(3))
   }
+
+  test("02.04 uncurry") {
+    def curriedMult(a: Int)(b: Int): Int = a + b
+    def mult = uncurry(curriedMult)
+    assertEquals(5, mult(2, 3))
+
+  }
 }

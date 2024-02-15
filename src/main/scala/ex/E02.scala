@@ -15,4 +15,8 @@ object E02 {
   // 02.03
   def curry[A, B, C](f: (A, B) => C): A => (B => C) =
     a => b => f(a, b)
+
+  // 02.05
+  def uncurry[A, B, C](f: A => B => C): (A, B) => C =
+    (a, b) => f(a)(b)
 }
