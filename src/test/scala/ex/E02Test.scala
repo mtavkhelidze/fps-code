@@ -22,8 +22,14 @@ class E02Test extends FunSuite {
 
   test("02.04 uncurry") {
     def curriedMult(a: Int)(b: Int): Int = a + b
-    def mult = uncurry(curriedMult)
+    val mult = uncurry(curriedMult)
     assertEquals(5, mult(2, 3))
+  }
 
+  test("02.05 compose") {
+    def f(b: Float): String = s"$b"
+    def g(a: Int): Float = a.toFloat
+    val fg = compose(f, g)
+    assertEquals(fg(1), "1.0")
   }
 }
