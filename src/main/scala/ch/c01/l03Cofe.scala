@@ -1,4 +1,5 @@
-package c01
+package ge.zgharbi.study.fps
+package ch.c01
 
 import scala.annotation.targetName
 

@@ -1,7 +1,5 @@
 ## Functional Programming in Scala
 
-<hr/>
-
 ##### _Code Companion & Notes for Second Edition (Scala 3)_
 
 <hr/>

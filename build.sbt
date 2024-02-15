@@ -6,6 +6,9 @@ lazy val fpsCode = (project in file("."))
   .settings(
     name := "fps-code",
     idePackagePrefix := Some("ge.zgharbi.study.fps"),
+    libraryDependencies ++= Seq(
+      "org.scalameta" %% "munit" % "0.7.29" % Test,
+    ),
   )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
