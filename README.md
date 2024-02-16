@@ -1,7 +1,9 @@
 ## Functional Programming in Scala
 
 ##### _Code Companion & Notes for Second Edition (Scala 3)_
+
 ##### [FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)
+
 <hr/>
 
 ### Notes
@@ -100,6 +102,37 @@
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
 
-
 #### Chapter 3: Functional data structures
 
+- Functional data structures are immutable and
+  are operated on using only pure functions.
+- Algebraic data types (ADTs) are defined via a set of data constructors.
+- ADTs are expressed in Scala with enumerations or sealed trait hierarchies.
+- Enumerations may take type parameters, and each
+  data constructor may take zero or more arguments.
+- Singly linked lists are modeled as an ADT with two data
+  constructors: `Cons(head: A, tail: List[A])` and `Nil`.
+- Companion objects are objects with the same name as
+  a data type. Companion objects have access to the
+  private and protected members of the companion type.
+- Pattern matching lets us destructure an algebraic data type, allowing
+  us to inspect the values used to construct the algebraic data type.
+- Pattern matches can be defined to be exhaustive, meaning one of the cases
+  is always matched. A non-exhaustive pattern match may throw a MatchError.
+  The compiler often warns when defining a non-exhaustive pattern match.
+- Purely functional data structures use persistence, also
+  known as structural sharing, to avoid unnecessary copying.
+- With singly linked lists, some operations can be implemented with no copying,
+  like prepending an element to the front of a list. Other operations require
+  copying the entire structure, like appending an element to the end of a list.
+- Many algorithms can be implemented with recursion on the structure
+  of an algebraic data type, with a base case associated with one data
+  constructor and recursive cases associated with other data constructors.
+- `foldRight` and `foldLeft` allow us to compute a
+  single result by visiting all the values of a list.
+- `map`, `filter`, and `flatMap` are higher-order
+  functions that compute a new list from an input list.
+- Extension methods allow object-oriented style methods to be defined for
+  a type in an ad hoc fashion separate from the definition of the type.
+
+#### Chapter 4: Handling errors without exceptions
