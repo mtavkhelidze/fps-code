@@ -4,8 +4,8 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
-* [Chapter 1: What is Functional Programming](#chapter-1:-what-is-functional-programming)
-* [Chapter 2: Getting started with FP in Scala](#chapter-2:-getting-started-with-fp-in-scala)
+* [Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
+* [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)
 
 ### Chapter 1: What is Functional Programming
 
