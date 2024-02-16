@@ -4,14 +4,14 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
-#### Contents
+<span id="toc"></span>
 
 * [Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
 * [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)
 * [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)
 * [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
 
-### Chapter 1: What is Functional Programming <small>[&crarr;](#contents)</small>
+#### Chapter 1: What is Functional Programming [&#8617;](#toc)
 
 
 - Functional programming is the construction of programs using
@@ -68,7 +68,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Functional programming enables local reasoning and allows
   the embedding of smaller programs within larger programs.
 
-### Chapter 2: Getting started with FP in Scala
+#### Chapter 2: Getting started with FP in Scala [&#8617;](#toc)
 
 - Scala is a mixed paradigm language, blending concepts from
   both objected-oriented programming and functional programming.
@@ -106,7 +106,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
 
-### Chapter 3: Functional data structures
+#### Chapter 3: Functional data structures [&#8617;](#toc)
 
 - Functional data structures are immutable and
   are operated on using only pure functions.
@@ -139,9 +139,9 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Extension methods allow object-oriented style methods to be defined for
   a type in an ad hoc fashion separate from the definition of the type.
 
-### Chapter 4: Handling errors without exceptions
+#### Chapter 4: Handling errors without exceptions [&#8617;](#toc)
 
-#### Quotes
+  #### Quotes
 
     Between map, lift, sequence, traverse, map2, map3, and so on, you should
     never have to modify any existing functions to work with optional values. »
