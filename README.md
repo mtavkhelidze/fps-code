@@ -11,7 +11,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 * [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)
 * [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
 
-#### Chapter 1: What is Functional Programming [&#8617;](#toc)
+#### Chapter 1: What is Functional Programming
 
 
 - Functional programming is the construction of programs using
@@ -68,7 +68,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Functional programming enables local reasoning and allows
   the embedding of smaller programs within larger programs.
 
-#### Chapter 2: Getting started with FP in Scala [&#8617;](#toc)
+#### Chapter 2: Getting started with FP in Scala
 
 - Scala is a mixed paradigm language, blending concepts from
   both objected-oriented programming and functional programming.
@@ -106,7 +106,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
 
-#### Chapter 3: Functional data structures [&#8617;](#toc)
+#### Chapter 3: Functional data structures
 
 - Functional data structures are immutable and
   are operated on using only pure functions.
@@ -139,7 +139,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Extension methods allow object-oriented style methods to be defined for
   a type in an ad hoc fashion separate from the definition of the type.
 
-#### Chapter 4: Handling errors without exceptions [&#8617;](#toc)
+#### Chapter 4: Handling errors without exceptions
 
   #### Quotes
 
