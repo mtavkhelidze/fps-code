@@ -4,15 +4,14 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
-<span id="toc"></span>
-
-* [Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
-* [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)
-* [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)
-* [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
+<div style="font-size: 80%">
+  [Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
+  [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
+  [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
+  [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)</br>
+</div>
 
 #### Chapter 1: What is Functional Programming
-
 
 - Functional programming is the construction of programs using
   only pure functions—functions that do not have side effects.
@@ -141,7 +140,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 #### Chapter 4: Handling errors without exceptions
 
-  #### Quotes
+#### Quotes
 
     Between map, lift, sequence, traverse, map2, map3, and so on, you should
     never have to modify any existing functions to work with optional values. »
