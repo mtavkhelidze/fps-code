@@ -1,6 +1,4 @@
----
-
-<style>
+<style  type="text/css" rel="stylesheet">
   .small-text {
     font-size: 80%;
     padding: 0;
@@ -8,8 +6,6 @@
     line-height: 1;
   }
 </style>
----
-
 Functional Programming in Scala
 ---
 Code Companion & Notes for Second Edition (Scala 3)
