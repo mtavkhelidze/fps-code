@@ -1,7 +1,7 @@
 ## Functional Programming in Scala
 
 ##### _Code Companion & Notes for Second Edition (Scala 3)_
-
+##### [FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)
 <hr/>
 
 ### Notes
@@ -99,3 +99,7 @@
   signature. Sometimes there is only a single possible implementation.
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
+
+
+#### Chapter 3: Functional data structures
+
