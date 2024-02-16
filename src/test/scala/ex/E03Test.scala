@@ -20,14 +20,14 @@ class E03Test extends FunSuite {
   )
 
   test("03.25 Tree[Int]#maximum") {
-    assertEquals(11, tree.maximum)
+    assertEquals(tree.maximum, 11)
   }
 
-  test("03.26 Tree[Int]#depth") {
+  test("03.26 Tree#depth") {
     assertEquals(tree.depth(Leaf(11)), 2)
   }
 
-  test("03.27 Tree[Int]#map") {
-      println(tree.map(x => s"value: ${x}"))
+  test("03.27 Tree#map") {
+    assertEquals(tree.map(x => x * 2).maximum, 22)
   }
 }
