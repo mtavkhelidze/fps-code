@@ -1,7 +1,4 @@
-Functional Programming in Scala
 ---
-Code Companion & Notes for Second Edition (Scala 3)
-
 <style>
   .small-text {
     font-size: 80%;
@@ -10,6 +7,12 @@ Code Companion & Notes for Second Edition (Scala 3)
     line-height: 1;
   }
 </style>
+---
+
+Functional Programming in Scala
+---
+Code Companion & Notes for Second Edition (Scala 3)
+
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
 <span class="small-text">[Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
