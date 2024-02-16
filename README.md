@@ -4,12 +4,14 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
+#### Contents
+
 * [Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
 * [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)
 * [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)
 * [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
 
-### Chapter 1: What is Functional Programming
+### Chapter 1: What is Functional Programming <small>[&crarr;](#contents)</small>
 
 
 - Functional programming is the construction of programs using
@@ -80,9 +82,9 @@ Code Companion & Notes for Second Edition (Scala 3)
 - Method definitions can contain local definitions, such as nested methods.
 - The result of a method is the value of its right-hand
   side. There’s no need for an explicit return statement.
-- The @main annotation defines an entry point of a program.
+- The `@main` annotation defines an entry point of a program.
 - The Unit type serves a similar purpose to void in C and Java.
-  There’s one value of the Unit type, which is written as ().
+  There’s one value of the Unit type, which is written as `()`.
 - The import keyword allows us to reference the members of a namespace (that
   is, an object or package) without writing out their fully qualified names.
 - Recursive functions allow the expression of looping without mutation.
