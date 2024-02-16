@@ -1,14 +1,19 @@
-## Functional Programming in Scala
+Functional Programming in Scala
+---
+Code Companion & Notes for Second Edition (Scala 3)
 
-##### _Code Companion & Notes for Second Edition (Scala 3)_
-
-##### [FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)
+<sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
 <hr/>
 
-### Notes
+* [Chapter 1: What is Functional Programming](#chapter-1:-what-is-functional-programming)
+* [Chapter 2: Getting started with FP in Scala](#chapter-2:-getting-started-with-fp-in-scala)
 
-#### Chapter 1: What is Functional Programming
+<hr />
+
+
+Chapter 1: What is Functional Programming
+---
 
 - Functional programming is the construction of programs using
   only pure functions—functions that do not have side effects.
@@ -64,7 +69,7 @@
 - Functional programming enables local reasoning and allows
   the embedding of smaller programs within larger programs.
 
-#### Chapter 2: Getting started with FP in Scala
+## Chapter 2: Getting started with FP in Scala
 
 - Scala is a mixed paradigm language, blending concepts from
   both objected-oriented programming and functional programming.
@@ -102,7 +107,7 @@
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
 
-#### Chapter 3: Functional data structures
+## Chapter 3: Func`tional data structures
 
 - Functional data structures are immutable and
   are operated on using only pure functions.
@@ -135,4 +140,9 @@
 - Extension methods allow object-oriented style methods to be defined for
   a type in an ad hoc fashion separate from the definition of the type.
 
-#### Chapter 4: Handling errors without exceptions
+## Chapter 4: Handling errors without exceptions
+
+### Quotes
+
+    Between map, lift, sequence, traverse, map2, map3, and so on, you should
+    never have to modify any existing functions to work with optional values. »
