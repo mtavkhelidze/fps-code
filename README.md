@@ -3,7 +3,7 @@ Functional Programming in Scala
 Code Companion & Notes for Second Edition (Scala 3)
 
 <style>
-  small-text {
+  .small-text {
     font-size: 80%;
   }
 </style>
