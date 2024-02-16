@@ -31,3 +31,11 @@ enum Either[+E, +A] {
     yield f(a, b)
   }
 }
+
+object Either {
+  def sequence[E, A](as: List[Either[E, A]]): Either[E, List[A]] =
+    traverse(as)(identity)
+
+  def traverse[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] =
+    as.foldRight[Either[E, List[B]]](Right(Nil))((a, b) => f(a).map2(b)(_ :: _))
+}
