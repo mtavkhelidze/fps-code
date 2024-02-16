@@ -5,14 +5,21 @@ Code Companion & Notes for Second Edition (Scala 3)
 <style>
   .small-text {
     font-size: 80%;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
   }
 </style>
 <sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
 
-[<span class="small-text">Chapter 1: What is Functional Programming<span>](#chapter-1-what-is-functional-programming)<br/>
-[Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
-[Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
-[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)</br>
+<span class="small-text">[Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)
+</span><br/>
+<span class="small-text">[Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)
+</span><br/>
+<span class="small-text">[Chapter 3: Functional data structures](#chapter-3-functional-data-structures)
+</span><br/>
+<span class="small-text">[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
+</span></br>
 
 #### Chapter 1: What is Functional Programming
 
