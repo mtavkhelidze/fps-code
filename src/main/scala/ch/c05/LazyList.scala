@@ -26,7 +26,7 @@ object LazyList {
       case Some((s, a)) => cons(a, unfold(s)(f))
 
   def continually[A](a: A): LazyList[A] =
-    unfold(a)(o => Some((o, a)))
+    unfold(())(_ => Some(((), a)))
 
   def from(n: Int): LazyList[Int] =
     unfold(n)(pv => Some(pv + 1, pv))
