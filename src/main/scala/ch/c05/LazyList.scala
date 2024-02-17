@@ -67,5 +67,7 @@ object LazyList {
 
     def flatMap[B](f: A => LazyList[B]): LazyList[B] =
       self.foldRight(empty[B])((a, acc) => f(a).append(acc))
+
+    def find(p: A => Boolean): Option[A] = self.filter(p).headOption
   }
 }
