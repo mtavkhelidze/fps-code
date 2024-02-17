@@ -79,4 +79,9 @@ class E05Test extends FunSuite {
     assertEquals(actual, expected)
   }
 
+  test("05.12 fibs") {
+    val actual = fibs.take(10).toList
+    val expected = List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
+    assertEquals(actual, expected)
+  }
 }

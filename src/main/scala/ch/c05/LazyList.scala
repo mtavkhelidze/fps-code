@@ -30,7 +30,10 @@ object LazyList {
 
   def from(n: Int): LazyList[Int] =
     unfold(n)(pv => Some(pv + 1, pv))
-    
+
+  def fibs: LazyList[Int] =
+    unfold((0, 1)) { case (curr, next) => Some((next, curr + next), curr) }
+
   extension [A](self: LazyList[A]) {
     def headOption: Option[A] =
       self.foldRight(None: Option[A])((a, _) => Some(a))
