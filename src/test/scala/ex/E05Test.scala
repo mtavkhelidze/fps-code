@@ -53,4 +53,17 @@ class E05Test extends FunSuite {
     val expected = true
     assertEquals(actual, expected)
   }
+
+  test("05.06 LazyList#headOption") {
+    {
+      val actual = LazyList(10, 20, 30).headOption
+      val expected = Some(10)
+      assertEquals(actual, expected)
+    }
+    {
+      val actual = empty.headOption
+      val expected = None
+      assertEquals(actual, expected)
+    }
+  }
 }

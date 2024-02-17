@@ -21,10 +21,9 @@ object LazyList {
   def empty[A]: LazyList[A] = LazyList.Empty
 
   extension [A](self: LazyList[A]) {
-    def headOption: Option[A] = self match {
-      case Empty      => None
-      case Cons(h, _) => Some(h())
-    }
+    def headOption: Option[A] =
+      self.foldRight(None: Option[A])((a, _) => Some(a))
+
     def toList: List[A] =
       @tailrec
       def go(l: LazyList[A], acc: List[A]): List[A] = l match
