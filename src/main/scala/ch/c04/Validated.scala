@@ -3,41 +3,43 @@ package ch.c04
 
 enum Validated[+E, +A] {
   case Valid(get: A)
-  case Invalid(errors: List[E])
+  case Invalid(errors: E)
 
   def map2[EE >: E, B, C](
       b: Validated[EE, B],
-  )(f: (A, B) => C): Validated[EE, C] =
+  )(f: (A, B) => C)(using combine: (EE, EE) => EE): Validated[EE, C] =
     (this, b) match {
       case (Valid(aa), Valid(bb))     => Valid(f(aa, bb))
       case (Invalid(es), Valid(_))    => Invalid(es)
       case (Valid(_), Invalid(es))    => Invalid(es)
-      case (Invalid(ae), Invalid(be)) => Invalid(ae ++ be)
+      case (Invalid(ae), Invalid(be)) => Invalid(combine(ae, be))
     }
 }
 
 object Validated {
 
   def valid[E, A](a: A): Validated[E, A] = Valid(a)
-  def invalid[E, A](e: E): Validated[E, A] = Invalid(List(e))
+  def invalid[E, A](e: E): Validated[E, A] = Invalid(e)
 
-  def sequence[E, A](vs: List[Validated[E, A]]): Validated[E, List[A]] =
+  def sequence[E, A](vs: List[Validated[E, A]])(using
+      (E, E) => E,
+  ): Validated[E, List[A]] =
     traverse(vs)(identity)
 
   def traverse[E, A, B](as: List[A])(
       f: A => Validated[E, B],
-  ): Validated[E, List[B]] =
+  )(using combineErr: (E, E) => E): Validated[E, List[B]] =
     as.foldRight(Valid(Nil): Validated[E, List[B]])((a, acc) =>
       f(a).map2(acc)(_ :: _),
     )
 
-  def fromEither[E, A](e: Either[List[E], A]): Validated[E, A] =
+  def fromEither[E, A](e: Either[E, A]): Validated[E, A] =
     e match
-      case Either.Left(e)  => Invalid(e)
+      case Either.Left(es) => Invalid(es)
       case Either.Right(a) => Valid(a)
 
   extension [E, A](v: Validated[E, A])
-    def toEither: Either[List[E], A] = v match {
+    def toEither: Either[E, A] = v match {
       case Valid(a)   => Either.Right(a)
       case Invalid(e) => Either.Left(e)
     }
