@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.ch05
+package ch.c05
 
 enum LazyList[+A] {
   case Empty
@@ -21,6 +21,9 @@ object LazyList {
   extension [A](ll: LazyList[A])
     def headOption: Option[A] = ll match {
       case Empty      => None
-      case Cons(h, _) => Some(h)
+      case Cons(h, _) => Some(h())
     }
+    def toList: List[A] = ll match
+      case LazyList.Empty      => Nil
+      case LazyList.Cons(h, t) => h() :: t().toList
 }
