@@ -20,6 +20,14 @@ object LazyList {
 
   def empty[A]: LazyList[A] = LazyList.Empty
 
+  def unfold[S, A](state: S)(f: S => Option[(S, A)]): LazyList[A] =
+    f(state) match
+      case None         => empty
+      case Some((s, a)) => cons(a, unfold(s)(f))
+
+  def continually[A](a: A): LazyList[A] =
+    unfold(a)(o => Some((o, a)))
+
   extension [A](self: LazyList[A]) {
     def headOption: Option[A] =
       self.foldRight(None: Option[A])((a, _) => Some(a))
@@ -70,4 +78,7 @@ object LazyList {
 
     def find(p: A => Boolean): Option[A] = self.filter(p).headOption
   }
+}
+
+object LazyListOps {
 }
