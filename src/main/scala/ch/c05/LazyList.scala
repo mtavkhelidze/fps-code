@@ -55,5 +55,17 @@ object LazyList {
 
     def forAll[B](p: A => Boolean): Boolean =
       self.foldRight(true)((a, acc) => acc && p(a))
+
+    def map[B](f: A => B): LazyList[B] =
+      self.foldRight(empty)((a, acc) => cons(f(a), acc))
+
+    def filter(f: A => Boolean): LazyList[A] =
+      self.foldRight(empty)((a, acc) => if f(a) then cons(a, acc) else acc)
+
+    def append[AA >: A](that: => LazyList[AA]): LazyList[AA] =
+      self.foldRight(that)((a, acc) => cons(a, acc))
+
+    def flatMap[B](f: A => LazyList[B]): LazyList[B] =
+      self.foldRight(empty[B])((a, acc) => f(a).append(acc))
   }
 }
