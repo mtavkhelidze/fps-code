@@ -48,10 +48,8 @@ object LazyList {
       case LazyList.Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
       case _                             => empty
 
-    @tailrec
-    def exists(p: A => Boolean): Boolean = self match
-      case LazyList.Empty      => false
-      case LazyList.Cons(h, t) => p(h()) || t().exists(p)
+    def exists(p: A => Boolean): Boolean =
+      self.foldRight(false)((a, acc) => acc || p(a))
 
     def foldRight[B](acc: => B)(f: (A, B) => B): B = self match
       case LazyList.Empty      => acc

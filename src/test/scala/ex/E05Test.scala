@@ -32,4 +32,11 @@ class E05Test extends FunSuite {
     val expected = LazyList(2, 2, 2, 4).toList
     assertEquals(actual, expected)
   }
+
+  test("05 LazyList#exists") {
+    val isThree = (n: Int) => n == 3
+    val actual = LazyList(2, 2, 3, 4, 5).exists(isThree)
+    val expected = true
+    assertEquals(actual, expected)
+  }
 }
