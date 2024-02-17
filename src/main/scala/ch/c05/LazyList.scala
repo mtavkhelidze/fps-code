@@ -28,6 +28,9 @@ object LazyList {
   def continually[A](a: A): LazyList[A] =
     unfold(a)(o => Some((o, a)))
 
+  def from(n: Int): LazyList[Int] =
+    unfold(n)(pv => Some(pv + 1, pv))
+    
   extension [A](self: LazyList[A]) {
     def headOption: Option[A] =
       self.foldRight(None: Option[A])((a, _) => Some(a))
@@ -80,5 +83,4 @@ object LazyList {
   }
 }
 
-object LazyListOps {
-}
+object LazyListOps {}

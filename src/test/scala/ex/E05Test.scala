@@ -74,8 +74,8 @@ class E05Test extends FunSuite {
   }
 
   test("05.12 from using unfold") {
-    val actual = continually(10).take(5).toList
-    val expected = List(10, 10, 10, 10, 10)
+    val actual = from(10).take(5).toList
+    val expected = List(10, 11, 12, 13, 14)
     assertEquals(actual, expected)
   }
 
