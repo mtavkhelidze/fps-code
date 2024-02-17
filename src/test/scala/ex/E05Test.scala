@@ -13,4 +13,16 @@ class E05Test extends FunSuite {
     val expected = List(1, 2, 3, 4)
     assertEquals(actual, expected)
   }
+
+  test("05.02 LazyList#drop") {
+    val actual = LazyList(1, 2, 3, 4, 5).drop(3).toList
+    val expected = LazyList(4, 5).toList
+    assertEquals(actual, expected)
+  }
+
+  test("05.02 LazyList#take") {
+    val actual = LazyList(1, 2, 3, 4, 5).take(3).toList
+    val expected = LazyList(1, 2, 3).toList
+    assertEquals(actual, expected)
+  }
 }
