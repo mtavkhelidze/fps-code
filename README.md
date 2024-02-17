@@ -8,6 +8,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
 [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
 [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)
+[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)
 
 #### Chapter 1: What is Functional Programming
 
@@ -138,7 +139,38 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 #### Chapter 4: Handling errors without exceptions
 
-#### Quotes
+   -  **Quotes**
+    
+        Between map, lift, sequence, traverse, map2, map3, and so on, you should
+        never have to modify any existing functions to work with optional values.
 
-    Between map, lift, sequence, traverse, map2, map3, and so on, you should
-    never have to modify any existing functions to work with optional values. »
+- Throwing exceptions is a side effect because
+  doing so breaks referential transparency.
+- Throwing exceptions inhibits local reasoning because program
+  meaning changes depending on which try block a throw is nested in.
+- Exceptions are not type safe; the potential for an error
+  occurring is not communicated in the type of the function,
+  leading to unhandled exceptions becoming runtime errors.
+- Instead of exceptions, we can model errors as values.
+- Rather than modeling error values as return codes, we
+  use various ADTs that describe success and failure.
+- The Option type has two data constructors, Some(a)
+  and None, which are used to model a successful result
+  and an error. No details are provided about the error.
+- The Either type has two data constructors, Left(e) and Right(a), which
+  are used to model an error and a successful result. The Either type
+  is similar to Option, except it provides details about the error.
+- The Try type is like Either, except errors are represented as
+  Throwable values instead of arbitrary types. By constraining
+  errors to be subtypes of Throwable, the Try type is able to provide
+  various convenience operations for code that throws exceptions.
+- The Validated type is like Either, except errors are
+  accumulated when combining multiple failed computations.
+- Higher-order functions, like map and flatMap, let us work with
+  potentially failed computations without explicitly handling an
+  error from every function call. These higher-order functions
+  are defined for each of the various error-handling data types.
+
+
+#### Chapter 5: Strictness and laziness
+
