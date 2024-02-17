@@ -20,8 +20,8 @@ object LazyList {
 
   def empty[A]: LazyList[A] = LazyList.Empty
 
-  extension [A](ll: LazyList[A])
-    def headOption: Option[A] = ll match {
+  extension [A](self: LazyList[A]) {
+    def headOption: Option[A] = self match {
       case Empty      => None
       case Cons(h, _) => Some(h())
     }
@@ -30,16 +30,22 @@ object LazyList {
       def go(l: LazyList[A], acc: List[A]): List[A] = l match
         case LazyList.Empty      => acc.reverse
         case LazyList.Cons(h, t) => go(t(), h() :: acc)
-      go(ll, Nil)
 
-    def take(n: Int): LazyList[A] = ll match {
+      go(self, Nil)
+
+    def take(n: Int): LazyList[A] = self match {
       case LazyList.Cons(h, t) if n > 1  => cons(h(), t().take(n - 1))
       case LazyList.Cons(h, _) if n == 1 => cons(h(), empty)
       case _                             => empty
     }
 
     @tailrec
-    def drop(n: Int): LazyList[A] = ll match
+    def drop(n: Int): LazyList[A] = self match
       case LazyList.Cons(_, t) if n > 0 => t().drop(n - 1)
-      case _                            => ll
+      case _                            => self
+
+    def takeWhile(p: A => Boolean): LazyList[A] = self match
+      case LazyList.Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
+      case _ => empty
+  }
 }

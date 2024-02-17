@@ -25,4 +25,11 @@ class E05Test extends FunSuite {
     val expected = LazyList(1, 2, 3).toList
     assertEquals(actual, expected)
   }
+
+  test("05.03 LazyList#takeWhile") {
+    val pred = (n: Int) => n % 2 == 0
+    val actual = LazyList(2, 2, 2, 4, 5).takeWhile(pred).toList
+    val expected = LazyList(2, 2, 2, 4).toList
+    assertEquals(actual, expected)
+  }
 }
