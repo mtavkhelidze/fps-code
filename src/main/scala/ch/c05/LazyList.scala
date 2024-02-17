@@ -49,10 +49,13 @@ object LazyList {
       case _                             => empty
 
     def exists(p: A => Boolean): Boolean =
-      self.foldRight(false)((a, acc) => acc || p(a))
+      self.foldRight(false)((a, acc) => p(a) || acc)
 
     def foldRight[B](acc: => B)(f: (A, B) => B): B = self match
       case LazyList.Empty      => acc
       case LazyList.Cons(h, t) => f(h(), t().foldRight(acc)(f))
+
+    def forAll[B](p: A => Boolean): Boolean =
+      self.foldRight(true)((a, acc) => acc && p(a))
   }
 }

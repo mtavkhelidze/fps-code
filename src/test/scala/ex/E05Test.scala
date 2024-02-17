@@ -39,4 +39,18 @@ class E05Test extends FunSuite {
     val expected = true
     assertEquals(actual, expected)
   }
+
+  test("05.04 LazyList#forAll false") {
+    val isThree = (n: Int) => n == 3
+    val actual = LazyList(2, 2, 3, 4, 5).forAll(isThree)
+    val expected = false
+    assertEquals(actual, expected)
+  }
+
+  test("05.04 LazyList#forAll true") {
+    val lessThanTen = (n: Int) => n < 10
+    val actual = LazyList(2, 2, 3, 4, 5).forAll(lessThanTen)
+    val expected = true
+    assertEquals(actual, expected)
+  }
 }
