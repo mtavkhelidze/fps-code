@@ -46,6 +46,15 @@ object LazyList {
 
     def takeWhile(p: A => Boolean): LazyList[A] = self match
       case LazyList.Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
-      case _ => empty
+      case _                             => empty
+
+    @tailrec
+    def exists(p: A => Boolean): Boolean = self match
+      case LazyList.Empty      => false
+      case LazyList.Cons(h, t) => p(h()) || t().exists(p)
+
+    def foldRight[B](acc: => B)(f: (A, B) => B): B = self match
+      case LazyList.Empty      => acc
+      case LazyList.Cons(h, t) => f(h(), t().foldRight(acc)(f))
   }
 }
