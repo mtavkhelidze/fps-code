@@ -35,6 +35,25 @@ object LazyList {
     unfold((0, 1)) { case (curr, next) => Some((next, curr + next), curr) }
 
   extension [A](self: LazyList[A]) {
+
+    def zipAll[B](other: LazyList[B]): LazyList[(Option[A], Option[B])] =
+      unfold(self, other) {
+        case (Empty, Empty) => None
+        case (Empty, Cons(h2, t2)) =>
+          Some(empty -> t2(), None -> Some(h2()))
+        case (Cons(h1, t1), Empty) =>
+          Some(t1() -> empty, Some(h1()) -> None)
+        case (Cons(h1, t1), Cons(h2, t2)) =>
+          Some(t1() -> t2(), Some(h1()) -> Some(h2()))
+      }
+
+    def zipWith[B, C](other: LazyList[B])(f: (A, B) => C): LazyList[C] =
+      unfold(self, other) {
+        case (Cons(h1, t1), Cons(h2, t2)) =>
+          Some(((t1(), t2()), f(h1(), h2())))
+        case _ => None
+      }
+
     def headOption: Option[A] =
       self.foldRight(None: Option[A])((a, _) => Some(a))
 
@@ -85,5 +104,3 @@ object LazyList {
     def find(p: A => Boolean): Option[A] = self.filter(p).headOption
   }
 }
-
-object LazyListOps {}

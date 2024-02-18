@@ -84,4 +84,25 @@ class E05Test extends FunSuite {
     val expected = List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
     assertEquals(actual, expected)
   }
+
+  test("05.13 zipWith using unfold") {
+    val as = LazyList(1, 2, 3)
+    val bs = LazyList("One", "Two", "Three", "Four")
+    val transf = (a: Int, b: String) => (a, b)
+    val actual = as.zipWith(bs)(transf).toList
+    val expected = List((1, "One"), (2, "Two"), (3, "Three"))
+    assertEquals(actual, expected)
+  }
+
+  test("05.13 zipAll using unfold") {
+    val as = LazyList(1, 2)
+    val bs = LazyList("One", "Two", "Three")
+    val actual = as.zipAll(bs).toList
+    val expected = List(
+      Some(1) -> Some("One"),
+      Some(2) -> Some("Two"),
+      None -> Some("Three"),
+    )
+    assertEquals(actual, expected)
+  }
 }
