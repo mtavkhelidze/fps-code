@@ -44,4 +44,10 @@ object RNG {
       val (d2, r2) = r1.double
       val (d3, r3) = r2.double
       ((d1, d2, d3), r3)
+
+    def ints(cnt: Int): (List[Int], RNG) =
+      (1 to cnt).foldRight(List[Int](), rng) { case (_, (acc, r)) =>
+        val (n, r1) = r.nextInt
+        (n :: acc, r1)
+      }
 }

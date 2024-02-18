@@ -14,4 +14,13 @@ class E06Test extends FunSuite {
     val expected = 231721747
     assertEquals(actual, expected)
   }
+
+  test("06.04 RNG#ints") {
+    val actual = rng.ints(10)._1
+    val expected = List(
+      119411244, 234161297, -1244417173, 1634559674, 946775486, -1754112425,
+      538511747, 1640547667, -1611436125, 231721747,
+    )
+    assertEquals(actual, expected)
+  }
 }
