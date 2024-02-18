@@ -8,7 +8,8 @@ Code Companion & Notes for Second Edition (Scala 3)
 [Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
 [Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
 [Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
-[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)
+[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
+[Chapter 6: Purely functional state](#chapter-6-purely-functional-state)<br/>
 
 #### Chapter 1: What is Functional Programming
 
@@ -139,8 +140,8 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 #### Chapter 4: Handling errors without exceptions
 
-  **Quotes**
-  
+**Quotes**
+
     Between map, lift, sequence, traverse, map2, map3, and so on, you should
     never have to modify any existing functions to work with optional values.
 
@@ -170,7 +171,6 @@ Code Companion & Notes for Second Edition (Scala 3)
   potentially failed computations without explicitly handling an
   error from every function call. These higher-order functions
   are defined for each of the various error-handling data types.
-
 
 #### Chapter 5: Strictness and laziness
 
@@ -202,3 +202,5 @@ Code Companion & Notes for Second Edition (Scala 3)
 - The unfold function, which generates a `LazyList` from a seed and a
   function, is an example of a _corecursive_ function. Corecursive functions
   produce data and continue to run as long as they are productive.
+
+#### Chapter 6: Purely functional state
