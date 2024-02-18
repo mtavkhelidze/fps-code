@@ -120,7 +120,20 @@ class E05Test extends FunSuite {
 
   test("05.15 LazyList#tails") {
     val actual = LazyList(1, 2, 3).tails.map(_.toList).toList
-     val expected = List(List(1, 2, 3), List(2, 3), List(3), Nil)
-     assertEquals(actual, expected)
+    val expected = List(List(1, 2, 3), List(2, 3), List(3), Nil)
+    assertEquals(actual, expected)
+  }
+
+  test("05 LazyList#hasSubSequence") {
+    {
+      val actual = LazyList(1, 2, 7, 4, 5).hasSubSequence(LazyList(7, 4))
+      val expected = true
+      assertEquals(actual, expected)
+    }
+    {
+      val actual = LazyList(1, 2, 7, 4, 5).hasSubSequence(LazyList(12, 13))
+      val expected = false
+      assertEquals(actual, expected)
+    }
   }
 }

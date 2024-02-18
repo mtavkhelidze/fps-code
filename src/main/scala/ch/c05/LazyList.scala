@@ -113,5 +113,8 @@ object LazyList {
       self.foldRight(empty[B])((a, acc) => f(a).append(acc))
 
     def find(p: A => Boolean): Option[A] = self.filter(p).headOption
+
+    def hasSubSequence(s: LazyList[A]): Boolean =
+      self.tails.exists(_.startsWith(s))
   }
 }
