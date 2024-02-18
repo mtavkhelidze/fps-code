@@ -136,4 +136,10 @@ class E05Test extends FunSuite {
       assertEquals(actual, expected)
     }
   }
+
+  test("05.16 LazyList#scanRight") {
+    val actual = LazyList(1, 2, 3).scanRight(0)(_ + _).toList
+    val expected = List(6, 5, 3, 0)
+    assertEquals(actual, expected)
+  }
 }

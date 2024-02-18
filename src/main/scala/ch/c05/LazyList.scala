@@ -116,5 +116,8 @@ object LazyList {
 
     def hasSubSequence(s: LazyList[A]): Boolean =
       self.tails.exists(_.startsWith(s))
+
+    def scanRight[B](acc: B)(f: (A, B) => B): LazyList[B] =
+      self.tails.map(xs => xs.foldRight(acc)((x, r) => f(x, r)))
   }
 }
