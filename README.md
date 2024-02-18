@@ -174,3 +174,31 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 #### Chapter 5: Strictness and laziness
 
+- Non-strictness is a useful technique that allows
+  separation of concerns and improved modularity.
+- A function is described as non-strict when it does not evaluate one or more of
+  its arguments. In contrast, a strict function always evaluates its arguments.
+- The short circuiting `&&` and `||` operators are examples
+  of non-strict functions; each avoids evaluation of its second
+  argument, depending on the value of the first argument.
+- In Scala, non-strict functions are written using by-name parameters,
+  which are indicated by a `=>` in front of the parameter type.
+- An unevaluated expression is referred to as a _thunk_, and we
+  can force a thunk to evaluate the expression to a result.
+- `LazyList` allows the definition of infinitely long sequences,
+  and various operations on `LazyList`, like `take`, `foldRight`, and
+  `exists`, allow partial evaluation of those infinite sequences.
+- `LazyList` is similar to `List`, except the head and tail of `Cons`
+  are evaluated lazily instead of strictly, like in `List.Cons`.
+- Memoization is the process of caching the
+  result of a computation upon first use.
+- Smart constructors are functions that create an instance of a
+  data type and provide some additional validation or provide a
+  slightly different type signature than the real data constructors.
+- Separating the description of a computation from its
+  evaluation provides opportunities for reuse and efficiency.
+- The `foldRight` function on `LazyList` supports early termination
+  and is subsequently safe for use with infinite lazy lists.
+- The unfold function, which generates a `LazyList` from a seed and a
+  function, is an example of a _corecursive_ function. Corecursive functions
+  produce data and continue to run as long as they are productive.
