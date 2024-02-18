@@ -117,4 +117,10 @@ class E05Test extends FunSuite {
     val expected = true
     assertEquals(actual, expected)
   }
+
+  test("05.15 LazyList#tails") {
+    val actual = LazyList(1, 2, 3).tails.map(_.toList).toList
+     val expected = List(List(1, 2, 3), List(2, 3), List(3), Nil)
+     assertEquals(actual, expected)
+  }
 }
