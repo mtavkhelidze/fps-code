@@ -46,7 +46,7 @@ object RNG {
       ((d1, d2, d3), r3)
 
     def ints(cnt: Int): (List[Int], RNG) =
-      (1 to cnt).foldRight(List[Int](), rng) { case (_, (acc, r)) =>
+      (1 to cnt).foldLeft(List[Int](), rng) { case ((acc, r), _) =>
         val (n, r1) = r.nextInt
         (n :: acc, r1)
       }
