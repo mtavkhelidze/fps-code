@@ -21,8 +21,12 @@ object RNG {
 
     inline def compute(s: Long): Long = (MULTIPLIER * s + INCREMENT) & MODULUS
 
-  extension (r: RNG)
+  extension (rng: RNG)
     def nonNegativeInt: (Int, RNG) =
-      val (n, r1) = r.nextInt
-      (if n > 0 then n else -(n + 1), r1)
+      val (n, r) = rng.nextInt
+      (if n > 0 then n else -(n + 1), r)
+
+    def double: (Double, RNG) =
+      val (n, r) = rng.nextInt
+      (n / Int.MaxValue.toDouble + 1, r)
 }
