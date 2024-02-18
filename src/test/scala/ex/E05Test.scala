@@ -105,4 +105,16 @@ class E05Test extends FunSuite {
     )
     assertEquals(actual, expected)
   }
+
+  test("05.14 startsWith false") {
+    val actual = LazyList(1, 2, 3).startsWith(LazyList(4, 5))
+    val expected = false
+    assertEquals(actual, expected)
+  }
+
+  test("05.14 startsWith true") {
+    val actual = LazyList(1, 2, 3).startsWith(LazyList(1, 2))
+    val expected = true
+    assertEquals(actual, expected)
+  }
 }
