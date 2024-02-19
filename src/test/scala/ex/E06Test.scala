@@ -1,6 +1,8 @@
 package ge.zgharbi.study.fps
 package ex
 
+import ch.c06.CandyMachine
+
 import munit.FunSuite
 
 class E06Test extends FunSuite {
@@ -22,7 +24,16 @@ class E06Test extends FunSuite {
       538511747, 1640547667, -1611436125, 231721747,
     )
     assertEquals(actual, expected)
-    val rd = rng.ints(10)
-    println(rd)
+  }
+
+  test("06.11 CandyMachine") {
+    import ch.c06.CandyMachine.*
+    import ch.c06.CandyMachine.Input.*
+
+    val m0 = Machine(locked = true, coins = 10, candies = 5)
+    val inputs = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
+    val (_, actual) = simulateMachine(inputs).run(m0)
+    val expected = Machine(true, 1, 14)
+    assertEquals(actual, expected)
   }
 }
