@@ -217,3 +217,31 @@ encoding_</u> and only refactoring o opaque types if
 > side effects. Imperative programming is about programming with
 > statements that modify some program state, and as we’ve seen,
 > it’s entirely reasonable to maintain state without side effects.
+
+- The `scala.util.Random` type provides generation of pseudo-random
+  numbers but performs generation as a side effect.
+- Pseudo-random number generation can be modeled as a pure function
+  from an input seed to an output seed and a generated value.
+- Making stateful APIs pure by having the API compute the next state
+  from the current state rather than actually mutating anything is a
+  general technique not limited to pseudo-random number generation.
+- When the functional approach feels awkward or tedious,
+  look for common patterns that can be factored out.
+- The `Rand[A]` type is an alias for a function `Rng => (A, Rng)`.
+  There are a variety of functions that create and transform
+  `Rand` values, like `unit`, `map`, `map2`, `flatMap`, and `sequence`.
+- Opaque types behave like type aliases in their defining scope but
+  behave like unrelated types outside their defining scope. An opaque
+  type encapsulates the relationship with the representation type,
+  allowing the definition of new types without runtime overhead.
+- Extension methods can be used to add methods to opaque types.
+- Case classes can be used instead of opaque types, but they
+  come with the runtime cost of wrapping the underlying value.
+- The `State[S, A]` type is an opaque alias for a function `S => (A, S)`.
+- State supports the same operations as Rand — `unit`, `map`,
+  `map2`, `flatMap`, and `sequence` — since none of these
+  operations had any dependency on `Rng` being the state type.
+- The `State` data type simplifies working with stateful APIs by removing the
+  need to manually thread input and output states throughout computations.
+- State computations can be built with for-comprehensions,
+  which result in imperative-looking code.
