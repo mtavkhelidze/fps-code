@@ -40,6 +40,7 @@ object RNG {
     if i + (n - 1) - mod >= 0 then unit(mod)
     else nonNegativeLessThen(n),
   )
+
   extension [A](self: Rand[A])
     def flatMap[B](f: A => Rand[B]): Rand[B] =
       rng =>
