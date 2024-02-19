@@ -10,6 +10,21 @@ trait RNG:
   def nextInt: (Int, RNG)
 
 object RNG {
+  opaque type Rand[+A] = RNG => (A, RNG)
+
+  val int: Rand[Int] = _.nextInt
+  val nonNegativeEven: Rand[Int] =
+    map(nonNegativeInt)(i => i - (i % 2))
+  val double: Rand[Double] =
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble - 1))
+
+  def unit[A](a: A): Rand[A] = rng => (a, rng)
+
+  extension [A](s: Rand[A])
+    def map[B](f: A => B): Rand[B] = rng =>
+      val (a, r1) = s(rng)
+      (f(a), r1)
+
   case class SimpleRNG(seed: Long) extends RNG:
     import LCG.*
 
