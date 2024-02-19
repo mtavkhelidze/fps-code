@@ -20,10 +20,17 @@ object RNG {
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
-  extension [A](s: Rand[A])
+  extension [A](self: Rand[A])
     def map[B](f: A => B): Rand[B] = rng =>
-      val (a, r1) = s(rng)
+      val (a, r1) = self(rng)
       (f(a), r1)
+
+    def map2[B, C](other: Rand[B])(f: (A, B) => C): Rand[C] =
+      rng => {
+        lazy val (a, r1) = self(rng)
+        lazy val (b, r2) = other(r1)
+        (f(a, b), r2)
+      }
 
   case class SimpleRNG(seed: Long) extends RNG:
     import LCG.*
