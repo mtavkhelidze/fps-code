@@ -6,6 +6,7 @@ object LCG {
   final val MULTIPLIER = 0x426ae571583e6443L
   final val INCREMENT = 0x7855fc643f22fc01L
 }
+
 trait RNG:
   def nextInt: (Int, RNG)
 
@@ -40,7 +41,7 @@ object RNG {
     if i + (n - 1) - mod >= 0 then unit(mod)
     else nonNegativeLessThen(n),
   )
-
+  
   extension [A](self: Rand[A])
     def flatMap[B](f: A => Rand[B]): Rand[B] =
       rng =>
