@@ -144,7 +144,7 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 > Between `map`, `lift`, `sequence`, `traverse`,
 `map2`, `map3`, and so on, you should
-never have to modify any existing functions to work with optional values.
+> never have to modify any existing functions to work with optional values.
 
 - Throwing exceptions is a side effect because
   doing so breaks referential transparency.
@@ -210,4 +210,10 @@ never have to modify any existing functions to work with optional values.
 
 > Don’t be afraid of using the <u>_simpler case class
 encoding_</u> and only refactoring o opaque types if
-allocation cost proves to be a bottleneck in your program.
+> allocation cost proves to be a bottleneck in your program.
+
+> <u>_Imperative and functional programming absolutely aren’t opposites_</u>.
+> Remember that functional programming is simply programming without
+> side effects. Imperative programming is about programming with
+> statements that modify some program state, and as we’ve seen,
+> it’s entirely reasonable to maintain state without side effects.
