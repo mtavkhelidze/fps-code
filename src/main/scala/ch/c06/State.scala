@@ -15,6 +15,14 @@ object State {
 
   def unit[S, A](a: A): State[S, A] = s => (a, s)
 
+  def modify[S](f: S => S): State[S, Unit] = for {
+    s <- get
+    _ <- set(s)
+  } yield ()
+
+  def get[S]: State[S, S] = s => (s, s)
+
+  def set[S](s: S): State[S, Unit] = s => ((), s)
   extension [S, A](self: State[S, A])
     def run(s: S): (A, S) = self(s)
 
