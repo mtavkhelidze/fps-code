@@ -35,6 +35,11 @@ object RNG {
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
+  def nonNegativeLessThen(n: Int): Rand[Int] = nonNegativeInt.flatMap(i =>
+    val mod = i % n
+    if i + (n - 1) - mod >= 0 then unit(mod)
+    else nonNegativeLessThen(n),
+  )
   extension [A](self: Rand[A])
     def flatMap[B](f: A => Rand[B]): Rand[B] =
       rng =>
