@@ -142,8 +142,9 @@ Code Companion & Notes for Second Edition (Scala 3)
 
 **Quotes**
 
-    Between map, lift, sequence, traverse, map2, map3, and so on, you should
-    never have to modify any existing functions to work with optional values.
+> Between `map`, `lift`, `sequence`, `traverse`,
+`map2`, `map3`, and so on, you should
+never have to modify any existing functions to work with optional values.
 
 - Throwing exceptions is a side effect because
   doing so breaks referential transparency.
@@ -204,3 +205,9 @@ Code Companion & Notes for Second Edition (Scala 3)
   produce data and continue to run as long as they are productive.
 
 #### Chapter 6: Purely functional state
+
+**Quotes**
+
+> Don’t be afraid of using the <u>_simpler case class
+encoding_</u> and only refactoring o opaque types if
+allocation cost proves to be a bottleneck in your program.
