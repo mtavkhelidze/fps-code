@@ -13,10 +13,15 @@ object CandyMachine {
       }
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] =
-    for {
-      _ <- State.traverse(inputs)(i => State.modify(update(i)))
-      s <- State.get
-    } yield (s.coins, s.candies)
+    State
+      .traverse(inputs)((i: Input) =>
+        State.modify(CandyMachine.update.apply(i)),
+      )
+      .flatMap((_: List[Unit]) =>
+        State
+          .get[Machine]
+          .map((s: Machine) => (s.coins, s.candies)),
+      )
 
   case class Machine(locked: Boolean, candies: Int, coins: Int)
 
