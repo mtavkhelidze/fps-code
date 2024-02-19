@@ -41,16 +41,11 @@ object RNG {
         val (a, r1) = self(rng)
         f(a)(rng)
 
-    def map[B](f: A => B): Rand[B] = rng =>
-      val (a, r1) = self(rng)
-      (f(a), r1)
+    def map[B](f: A => B): Rand[B] =
+      self.flatMap(a => unit(f(a)))
 
     def map2[B, C](other: Rand[B])(f: (A, B) => C): Rand[C] =
-      rng => {
-        lazy val (a, r1) = self(rng)
-        lazy val (b, r2) = other(r1)
-        (f(a, b), r2)
-      }
+      self.flatMap(a => other.map(b => f(a, b)))
 
     def both[B](other: Rand[B]): Rand[(A, B)] = self.map2(other)((_, _))
 
