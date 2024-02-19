@@ -1,15 +1,17 @@
 Functional Programming in Scala
 ---
-Code Companion & Notes for Second Edition (Scala 3)
+_[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second Edition](https://www.amazon.com/Functional-Programming-Second-Michael-Pilquist/dp/1617299588) using Scala 3_
 
-<sub>[FPScala Github](https://github.com/fpinscala/fpinscala) | [This GitHub](https://github.com/mtavkhelidze/fps-code)</sub>
+[Part One: Introduction to functional programming](#part-one-introduction-to-functional-programming)<br/>
+&nbsp;&nbsp;[Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
+&nbsp;&nbsp;[Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
+&nbsp;&nbsp;[Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
+&nbsp;&nbsp;[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
+&nbsp;&nbsp;[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
+&nbsp;&nbsp;[Chapter 6: Purely functional state](#chapter-6-purely-functional-state)<br/>
+[Part Two: Functional design and combinator libraries](#part-two-functional-design-and-combinator-libraries)
 
-[Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
-[Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
-[Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
-[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
-[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
-[Chapter 6: Purely functional state](#chapter-6-purely-functional-state)<br/>
+### Part One: Introduction to functional programming
 
 #### Chapter 1: What is Functional Programming
 
@@ -245,3 +247,6 @@ encoding_</u> and only refactoring o opaque types if
   need to manually thread input and output states throughout computations.
 - State computations can be built with for-comprehensions,
   which result in imperative-looking code.
+
+
+### Part Two: Functional design and combinator libraries
