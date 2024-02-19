@@ -22,5 +22,7 @@ class E06Test extends FunSuite {
       538511747, 1640547667, -1611436125, 231721747,
     )
     assertEquals(actual, expected)
+    val rd = rng.ints(10)
+    println(rd)
   }
 }

@@ -10,13 +10,35 @@ trait RNG:
   def nextInt: (Int, RNG)
 
 object RNG {
-  opaque type Rand[+A] = RNG => (A, RNG)
+  type Rand[+A] = RNG => (A, RNG)
 
   val int: Rand[Int] = _.nextInt
+
   val nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - (i % 2))
+
   val double: Rand[Double] =
     map(nonNegativeInt)(_ / (Int.MaxValue.toDouble - 1))
+
+  def randIntDouble: Rand[(Int, Double)] =
+    int both double
+
+  def randDoubleInt: Rand[(Double, Int)] =
+    double both int
+
+  def sequence[A](rs: List[Rand[A]]): Rand[List[A]] =
+    rs.foldLeft(unit(Nil: List[A]))((acc, r) => r.map2(acc)(_ :: _))
+      .map(_.reverse)
+
+  // In `sequence`, the base case of the fold is a `unit` action that
+  // returns the empty list. At each step in the fold, we accumulate
+  // in `acc` and `r` is the current element in the list. `map2(r,
+  // acc)(_ :: _)` results in a value of type `Rand[List[A]]` We map
+  // over that to prepend (cons) the element onto the accumulated list.
+  //
+  // We are using `foldRight`. If we used `foldLeft` then the values in the
+  // resulting list would appear in reverse order. It would be arguably
+  // better to use `foldLeft` followed by `reverse`. What do you think?
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
@@ -31,6 +53,8 @@ object RNG {
         lazy val (b, r2) = other(r1)
         (f(a, b), r2)
       }
+
+    def both[B](other: Rand[B]): Rand[(A, B)] = self.map2(other)((_, _))
 
   case class SimpleRNG(seed: Long) extends RNG:
     import LCG.*
