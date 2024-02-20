@@ -6,6 +6,9 @@ import java.util.concurrent.{Future as JavaFuture, *}
 opaque type Par[A] = ExecutorService => JavaFuture[A]
 
 object Par {
+  def asyncF[A, B](f: A => B): A => Par[B] =
+    (a: A) => lazyUnit(f(a))
+
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
   def unit[A](a: A): Par[A] = _ => UnitFuture(a)
@@ -59,6 +62,11 @@ object Par {
 
 object Examples {
   import Par.*
+
+  // sort the list on the left and do nothing on the right
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
+    parList.map2(unit(()))((a, _) => a.sorted)
+
   def sum(ints: IndexedSeq[Int]): Par[Int] =
     if ints.size <= 0 then Par.unit(ints.headOption.getOrElse(0))
     else
