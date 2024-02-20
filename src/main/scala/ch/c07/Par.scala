@@ -1,7 +1,7 @@
 package ge.zgharbi.study.fps
 package ch.c07
 
-import java.util.concurrent.{Callable, ExecutorService, TimeUnit, Future as JavaFuture}
+import java.util.concurrent.{Future as JavaFuture, *}
 
 opaque type Par[A] = ExecutorService => JavaFuture[A]
 
@@ -27,6 +27,34 @@ object Par {
         val fa = pa(es)
         val fb = pb(es)
         UnitFuture(f(fa.get, fb.get))
+
+    def map2Timeouts[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =
+      es =>
+        new JavaFuture[C] {
+          private val fa = pa(es)
+          private val fb = pb(es)
+          @volatile private var cache: Option[C] = None
+
+          override def cancel(mayInterruptIfRunning: Boolean): Boolean =
+            fa.cancel(mayInterruptIfRunning) || fb.cancel(mayInterruptIfRunning)
+
+          override def isCancelled: Boolean = fa.isCancelled || fb.isCancelled
+
+          override def isDone: Boolean = cache.isDefined
+
+          override def get(): C = get(Long.MaxValue, TimeUnit.MILLISECONDS)
+
+          override def get(timeout: Long, unit: TimeUnit): C = {
+            val timeoutNs = TimeUnit.NANOSECONDS.convert(timeout, unit)
+            val started = System.nanoTime
+            val a = fa.get(timeoutNs, TimeUnit.NANOSECONDS)
+            val elapsed = System.nanoTime - started
+            val b = fb.get(timeoutNs - elapsed, TimeUnit.NANOSECONDS)
+            val c = f(a, b)
+            cache = Some(c)
+            c
+          }
+        }
 }
 
 object Examples {
