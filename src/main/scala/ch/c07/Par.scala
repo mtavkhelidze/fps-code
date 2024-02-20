@@ -7,6 +7,19 @@ opaque type Par[A] = ExecutorService => JavaFuture[A]
 
 object Par {
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] =
+    fork {
+      val fbs: List[Par[B]] = ps.map(asyncF(f))
+      sequence(fbs)
+    }
+
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] =
+    fork {
+      val pars: List[Par[List[A]]] =
+        as.map(asyncF(a => if f(a) then List(a) else Nil))
+      sequence(pars).map(_.flatten)
+    }
+    
   def sequenceBalanced[A](pas: IndexedSeq[Par[A]]): Par[IndexedSeq[A]] =
     if pas.isEmpty then unit(IndexedSeq.empty)
     else if pas.size == 1 then pas.head.map(IndexedSeq(_))
