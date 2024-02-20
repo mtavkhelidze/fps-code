@@ -25,6 +25,9 @@ object Par {
   extension [A](pa: Par[A])
     def run(s: ExecutorService): JavaFuture[A] = pa(s)
 
+    def map[B](f: A => B): Par[B] =
+      pa.map2(unit(()))((a, _) => f(a))
+
     def map2[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =
       (es: ExecutorService) =>
         val fa = pa(es)
@@ -65,7 +68,7 @@ object Examples {
 
   // sort the list on the left and do nothing on the right
   def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
-    parList.map2(unit(()))((a, _) => a.sorted)
+    parList.map(_.sorted)
 
   def sum(ints: IndexedSeq[Int]): Par[Int] =
     if ints.size <= 0 then Par.unit(ints.headOption.getOrElse(0))
