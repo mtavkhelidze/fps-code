@@ -40,7 +40,9 @@ object Par {
 
   def unit[A](a: A): Par[A] = _ => UnitFuture(a)
 
-  def fork[A](a: => Par[A]): Par[A] = es => es.submit(() => a(es).get)
+  def delay[A](fa: => Par[A]): Par[A] = es => fa(es)
+  
+  def fork[A](fa: => Par[A]): Par[A] = es => es.submit(() => fa(es).get)
 
   private case class UnitFuture[A](get: A) extends JavaFuture[A] {
     override def cancel(mayInterruptIfRunning: Boolean): Boolean = false
@@ -102,4 +104,12 @@ object Examples {
     else
       val (l, r) = ints.splitAt(ints.size / 2)
       Par.fork(sum(l)).map2(Par.fork(sum(r)))(_ + _)
+}
+
+@main def main(): Unit = {
+  import ch.c07.Par.*
+
+  val a = lazyUnit(42 + 1)
+  val es = Executors.newFixedThreadPool(2)
+  println(Par.equal(es)(a, fork(a)))
 }
