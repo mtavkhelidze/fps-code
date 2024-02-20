@@ -6,6 +6,17 @@ import java.util.concurrent.{Future as JavaFuture, *}
 opaque type Par[A] = ExecutorService => JavaFuture[A]
 
 object Par {
+
+  def sequenceBalanced[A](pas: IndexedSeq[Par[A]]): Par[IndexedSeq[A]] =
+    if pas.isEmpty then unit(IndexedSeq.empty)
+    else if pas.size == 1 then pas.head.map(IndexedSeq(_))
+    else
+      val (l, r) = pas.splitAt(pas.size / 2)
+      sequenceBalanced(l).map2(sequenceBalanced(r))(_ ++ _)
+
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] =
+    sequenceBalanced(ps.toIndexedSeq).map(_.toList)
+
   def asyncF[A, B](f: A => B): A => Par[B] =
     (a: A) => lazyUnit(f(a))
 
