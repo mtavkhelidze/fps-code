@@ -6,6 +6,11 @@ import java.util.concurrent.{Future as JavaFuture, *}
 opaque type Par[A] = ExecutorService => JavaFuture[A]
 
 object Par {
+  def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
+    es =>
+      val k = key.run(es).get
+      choices(k).run(es)
+      
   def fork[A](a: => Par[A]): Par[A] =
     es =>
       es.submit(new Callable[A] {

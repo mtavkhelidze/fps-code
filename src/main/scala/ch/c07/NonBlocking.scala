@@ -9,6 +9,9 @@ object NonBlocking {
   opaque type Par[A] = ExecutorService => Future[A]
 
   object Par {
+    def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
+      es => cb => key(es)(k => choices(k)(es)(cb))
+
     def choiceN[A](p: Par[Int])(choices: List[Par[A]]): Par[A] =
       es =>
         cb =>
