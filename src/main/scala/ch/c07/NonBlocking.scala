@@ -9,16 +9,23 @@ object NonBlocking {
   opaque type Par[A] = ExecutorService => Future[A]
 
   object Par {
+    def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+      es =>
+        cb =>
+          cond(es) { b =>
+            if b then eval(es)(t(es)(cb))
+            else eval(es)(f(es)(cb))
+          }
+
+    private def eval(es: ExecutorService)(r: => Unit): Unit =
+      es.submit(new Callable[Unit] {
+        override def call: Unit = r
+      })
 
     def unit[A](a: A): Par[A] = _ => cb => cb(a)
 
     def fork[A](a: => Par[A]): Par[A] =
       es => cb => eval(es)(a(es)(cb))
-
-    def eval(es: ExecutorService)(r: => Unit): Unit =
-      es.submit(new Callable[Unit] {
-        override def call: Unit = r
-      })
 
     extension [A](pa: Par[A])
       def map2[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =

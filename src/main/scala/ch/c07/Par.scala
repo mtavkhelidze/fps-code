@@ -52,7 +52,7 @@ object Par {
           def cancel(evenIfRunning: Boolean): Boolean =
             futureA.cancel(evenIfRunning) || futureB.cancel(evenIfRunning)
 
-  def choise[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
     es =>
       if cond.run(es).get then t(es)
       else f(es)
