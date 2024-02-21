@@ -53,9 +53,12 @@ object Par {
             futureA.cancel(evenIfRunning) || futureB.cancel(evenIfRunning)
 
   def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    choiceN(cond.map(b => if b then 0 else 1))(List(t, f))
+
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
     es =>
-      if cond.run(es).get then t(es)
-      else f(es)
+      val index = n(es).get % choices.size
+      choices(index).run(es)
 
   def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean =
     p(e).get == p2(e).get

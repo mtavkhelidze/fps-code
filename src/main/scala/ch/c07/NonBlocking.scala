@@ -9,6 +9,13 @@ object NonBlocking {
   opaque type Par[A] = ExecutorService => Future[A]
 
   object Par {
+    def choiceN[A](p: Par[Int])(choices: List[Par[A]]): Par[A] =
+      es =>
+        cb =>
+          p(es) { n =>
+            val index = n % choices.size
+            eval(es)(choices(index)(es)(cb))
+          }
     def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
       es =>
         cb =>
@@ -28,6 +35,9 @@ object NonBlocking {
       es => cb => eval(es)(a(es)(cb))
 
     extension [A](pa: Par[A])
+      def map[B](f: A => B): Par[B] =
+        pa.map2(unit(()))((a, _) => f(a))
+
       def map2[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =
         es =>
           cb =>
