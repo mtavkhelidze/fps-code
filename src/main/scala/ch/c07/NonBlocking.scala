@@ -17,19 +17,12 @@ object NonBlocking {
 
     def choiceN[A](p: Par[Int])(choices: List[Par[A]]): Par[A] =
       p.flatMap(i => choices(i))
-      
+
     def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
       cond.flatMap(b => if b then t else f)
 
-    def unit[A](a: A): Par[A] = _ => cb => cb(a)
-
-    def fork[A](a: => Par[A]): Par[A] =
-      es => cb => eval(es)(a(es)(cb))
-
-    private def eval(es: ExecutorService)(r: => Unit): Unit =
-      es.submit(new Callable[Unit] {
-        override def call: Unit = r
-      })
+    def join[A](ppa: Par[Par[A]]): Par[A] =
+      ppa.flatMap(identity)
 
     extension [A](pa: Par[A]) {
       def flatMap[B](f: A => Par[B]): Par[B] =
@@ -64,5 +57,15 @@ object NonBlocking {
         latch.await()
         ref.get
     }
+
+    def unit[A](a: A): Par[A] = _ => cb => cb(a)
+
+    def fork[A](a: => Par[A]): Par[A] =
+      es => cb => eval(es)(a(es)(cb))
+
+    private def eval(es: ExecutorService)(r: => Unit): Unit =
+      es.submit(new Callable[Unit] {
+        override def call: Unit = r
+      })
   }
 }

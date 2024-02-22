@@ -23,7 +23,11 @@ object Par {
         def call: A = a(es).get
       })
 
+  def join[A](ppa: Par[Par[A]]): Par[A] =
+    ppa.flatMap(identity)
+
   extension [A](pa: Par[A]) {
+
     def run(s: ExecutorService): JavaFuture[A] = pa(s)
 
     def flatMap[B](f: A => Par[B]): Par[B] =
