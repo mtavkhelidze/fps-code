@@ -254,3 +254,32 @@ encoding_</u> and only refactoring o opaque types if
 ### Part Two: Functional design and combinator libraries
 
 #### Chapter 7: Purely functional parallelism
+
+* No existing library is beyond reexamination. Most libraries contain
+  arbitrary design choices. Experimenting with building alternative
+  libraries may result in discovering new things about the problem
+  space.
+* Simple examples let us focus on the essence of the problem domain
+  instead of getting lost in incidental detail.
+* Parallel and asynchronous computations can be modeled in a purely
+  functional way.
+* Building a description of a computation along with a separate
+  interpreter that runs the computations allows computations to be
+  treated as values, which can then be combined with other
+  computations.
+* An effective technique for API design is conjuring types and
+  implementations, trying to implement those types and
+  implementations, adjusting, and iterating.
+* The `Par[A]` type describes a computation that may evaluate some or
+  all of the computation on multiple threads.
+* Par values can be transformed and combined with many familiar
+  operations, such as `map`, `flatMap`, and `sequence`.
+* Treating an API as an algebra and defining laws that constrain
+  implementations are both valuable design tools and an effective
+  testing technique.
+* Partitioning an API into a minimal set of primitive functions and a
+  set of combinator functions promotes reuse and understanding.
+* An _actor_ is a non-blocking concurrency primitive based on message
+  passing. Actors are not purely functional but can be used to
+  implement purely functional APIs, as demonstrated with the
+  implementation of `map2` for the non-blocking `Par`.
