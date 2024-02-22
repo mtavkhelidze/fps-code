@@ -9,35 +9,32 @@ object NonBlocking {
   opaque type Par[A] = ExecutorService => Future[A]
 
   object Par {
+    def chooser[A, B](p: Par[A])(f: A => Par[B]): Par[B] =
+      p.flatMap(f)
+
     def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
       es => cb => key(es)(k => choices(k)(es)(cb))
 
     def choiceN[A](p: Par[Int])(choices: List[Par[A]]): Par[A] =
-      es =>
-        cb =>
-          p(es) { n =>
-            val index = n % choices.size
-            eval(es)(choices(index)(es)(cb))
-          }
+      p.flatMap(i => choices(i))
+      
     def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
-      es =>
-        cb =>
-          cond(es) { b =>
-            if b then eval(es)(t(es)(cb))
-            else eval(es)(f(es)(cb))
-          }
-
-    private def eval(es: ExecutorService)(r: => Unit): Unit =
-      es.submit(new Callable[Unit] {
-        override def call: Unit = r
-      })
+      cond.flatMap(b => if b then t else f)
 
     def unit[A](a: A): Par[A] = _ => cb => cb(a)
 
     def fork[A](a: => Par[A]): Par[A] =
       es => cb => eval(es)(a(es)(cb))
 
-    extension [A](pa: Par[A])
+    private def eval(es: ExecutorService)(r: => Unit): Unit =
+      es.submit(new Callable[Unit] {
+        override def call: Unit = r
+      })
+
+    extension [A](pa: Par[A]) {
+      def flatMap[B](f: A => Par[B]): Par[B] =
+        fork(es => cb => pa(es)(a => f(a)(es)(cb)))
+
       def map[B](f: A => B): Par[B] =
         pa.map2(unit(()))((a, _) => f(a))
 
@@ -66,5 +63,6 @@ object NonBlocking {
         }
         latch.await()
         ref.get
+    }
   }
 }

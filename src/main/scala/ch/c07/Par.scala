@@ -6,31 +6,45 @@ import java.util.concurrent.{Future as JavaFuture, *}
 opaque type Par[A] = ExecutorService => JavaFuture[A]
 
 object Par {
+  def choice[A](p: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    p.flatMap(b => if b then t else f)
+
+  def choiceN[A](p: Par[Int])(choices: List[Par[A]]): Par[A] =
+    p.flatMap(i => choices(i))
+
   def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
     es =>
       val k = key.run(es).get
       choices(k).run(es)
-      
+
   def fork[A](a: => Par[A]): Par[A] =
     es =>
       es.submit(new Callable[A] {
         def call: A = a(es).get
       })
 
-  extension [A](pa: Par[A]) def run(s: ExecutorService): JavaFuture[A] = pa(s)
+  extension [A](pa: Par[A]) {
+    def run(s: ExecutorService): JavaFuture[A] = pa(s)
 
-  extension [A](pa: Par[A])
+    def flatMap[B](f: A => Par[B]): Par[B] =
+      es =>
+        val a = pa.run(es).get
+        f(a).run(es)
+
     def map[B](f: A => B): Par[B] =
       pa.map2(unit(()))((a, _) => f(a))
 
-  extension [A](pa: Par[A])
     def map2[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =
       es =>
         val af = pa(es)
         val bf = pb(es)
         UnitFuture(f(af.get, bf.get))
 
-  extension [A](pa: Par[A])
+    def chooser[B](f: A => Par[B]): Par[B] =
+      es =>
+        val a = pa(es).get
+        f(a).run(es)
+
     def map2Timeouts[B, C](pb: Par[B])(f: (A, B) => C): Par[C] =
       es =>
         new JavaFuture[C]:
@@ -52,18 +66,12 @@ object Par {
             cache = Some(c)
             c
 
-          def isCancelled: Boolean = futureA.isCancelled || futureB.isCancelled
+          def isCancelled: Boolean =
+            futureA.isCancelled || futureB.isCancelled
 
           def cancel(evenIfRunning: Boolean): Boolean =
             futureA.cancel(evenIfRunning) || futureB.cancel(evenIfRunning)
-
-  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
-    choiceN(cond.map(b => if b then 0 else 1))(List(t, f))
-
-  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
-    es =>
-      val index = n(es).get % choices.size
-      choices(index).run(es)
+  }
 
   def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean =
     p(e).get == p2(e).get
