@@ -9,8 +9,10 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
 &nbsp;&nbsp;[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
 &nbsp;&nbsp;[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
 &nbsp;&nbsp;[Chapter 6: Purely functional state](#chapter-6-purely-functional-state)<br/>
-<br/>[Part Two: Functional design and combinator libraries](#part-two-functional-design-and-combinator-libraries)<br/>
+<br/>[Part Two: Functional design and combinator libraries](#part-two-functional-des
+ign-and-combinator-libraries)<br/>
 &nbsp;&nbsp;[Chapter 7: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
+&nbsp;&nbsp;[Chapter 8: Property-based testing](#chapter-8-property-based-testing)<br/>
 
 
 ### Part One: Introduction to functional programming
@@ -283,3 +285,5 @@ encoding_</u> and only refactoring o opaque types if
   passing. Actors are not purely functional but can be used to
   implement purely functional APIs, as demonstrated with the
   implementation of `map2` for the non-blocking `Par`.
+
+#### Chapter 8: Property-based testing
