@@ -15,6 +15,10 @@ object RNG {
 
   val int: Rand[Int] = _.nextInt
 
+  def boolean(rng: RNG): (Boolean, RNG) =
+    rng.nextInt match
+      case (i, rng2) => (i % 2 == 0, rng2)
+
   val nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - (i % 2))
 
