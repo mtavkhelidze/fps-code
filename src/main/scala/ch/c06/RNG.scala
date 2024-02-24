@@ -15,15 +15,14 @@ object RNG {
 
   val int: Rand[Int] = _.nextInt
 
-  def boolean(rng: RNG): (Boolean, RNG) =
-    rng.nextInt match
-      case (i, rng2) => (i % 2 == 0, rng2)
-
   val nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - (i % 2))
-
   val double: Rand[Double] =
     map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))
+
+  def boolean: Rand[Boolean] = rng =>
+    rng.nextInt match
+      case (i, rng2) => (i % 2 == 0, rng2)
 
   def randIntDouble: Rand[(Int, Double)] =
     int both double
