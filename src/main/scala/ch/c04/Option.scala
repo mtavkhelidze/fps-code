@@ -14,7 +14,7 @@ enum Option[+A] {
   def flatMap[B](f: A => Option[B]): Option[B] =
     map(f).getOrElse(None)
 
-  def map[B](f: A => B): Option[B] = this match {
+  infix def map[B](f: A => B): Option[B] = this match {
     case Some(get) => Some(f(get))
     case None      => None
   }

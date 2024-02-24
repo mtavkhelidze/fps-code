@@ -41,7 +41,7 @@ object RNG {
     if i + (n - 1) - mod >= 0 then unit(mod)
     else nonNegativeLessThen(n),
   )
-  
+
   extension [A](self: Rand[A])
     def flatMap[B](f: A => Rand[B]): Rand[B] =
       rng =>
@@ -54,7 +54,7 @@ object RNG {
     def map2[B, C](other: Rand[B])(f: (A, B) => C): Rand[C] =
       self.flatMap(a => other.map(b => f(a, b)))
 
-    def both[B](other: Rand[B]): Rand[(A, B)] = self.map2(other)((_, _))
+    infix def both[B](other: Rand[B]): Rand[(A, B)] = self.map2(other)((_, _))
 
   case class SimpleRNG(seed: Long) extends RNG:
     import LCG.*
