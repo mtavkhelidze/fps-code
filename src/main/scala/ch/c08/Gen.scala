@@ -95,6 +95,8 @@ object Gen {
       size.flatMap(listOfN)
 
     def flatMap[B](f: A => Gen[B]): Gen[B] = State.flatMap(self)(f)
+
+    def map[B](f: A => B): Gen[B] = State.map(self)(f)
   }
 
   def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] =
@@ -119,3 +121,10 @@ object Gen {
 
 // Sized generator
 opaque type SGen[+A] = Int => Gen[A]
+object SGen {
+  extension [A](self: SGen[A]) {
+    def map[B](f: A => B): SGen[B] = n => self(n).map(f)
+    def flatMap[B](f: A => SGen[B]): SGen[B] = n =>
+      self(n).flatMap(a => f(a)(n))
+  }
+}
