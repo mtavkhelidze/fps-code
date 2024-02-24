@@ -88,6 +88,8 @@ object Gen {
   extension [A](self: Gen[A]) {
     def unsized: SGen[A] = _ => self
 
+    def list: SGen[List[A]] = n => self.listOfN(n)
+
     def listOfN(size: Int): Gen[List[A]] =
       Gen.listOfN(size, self)
 
@@ -124,7 +126,9 @@ opaque type SGen[+A] = Int => Gen[A]
 object SGen {
   extension [A](self: SGen[A]) {
     def map[B](f: A => B): SGen[B] = n => self(n).map(f)
+
     def flatMap[B](f: A => SGen[B]): SGen[B] = n =>
       self(n).flatMap(a => f(a)(n))
+
   }
 }
