@@ -23,7 +23,7 @@ object RNG {
     map(nonNegativeInt)(i => i - (i % 2))
 
   val double: Rand[Double] =
-    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble - 1))
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))
 
   def randIntDouble: Rand[(Int, Double)] =
     int both double
