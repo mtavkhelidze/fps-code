@@ -86,6 +86,7 @@ opaque type Gen[+A] = State[RNG, A]
 object Gen {
 
   extension [A](self: Gen[A]) {
+    def unsized: SGen[A] = _ => self
 
     def listOfN(size: Int): Gen[List[A]] =
       Gen.listOfN(size, self)
@@ -115,3 +116,6 @@ object Gen {
 
   def forAll[A](gen: Gen[A])(f: A => Boolean): Prop = ???
 }
+
+// Sized generator
+opaque type SGen[+A] = Int => Gen[A]
