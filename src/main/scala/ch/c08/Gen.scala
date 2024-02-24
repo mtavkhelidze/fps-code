@@ -29,12 +29,15 @@ object Gen {
     def flatMap[B](f: A => Gen[B]): Gen[B] = State.flatMap(self)(f)
   }
 
+  def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] =
+    boolean.flatMap(b => if b then g1 else g2)
+
+  def boolean: Gen[Boolean] = State(RNG.boolean)
+
   def listOfN[A](n: Int, gen: Gen[A]): Gen[List[A]] =
     State.sequence(List.fill(n)(gen))
 
   def unit[A](a: => A): Gen[A] = State.unit(a)
-
-  def boolean: Gen[Boolean] = State(RNG.boolean)
 
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
     State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive - start))
