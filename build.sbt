@@ -9,9 +9,6 @@ lazy val fpsCode = (project in file("."))
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test,
     ),
-    scalacOptions ++= Seq(
-      "-explain",
-    ),
   )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
