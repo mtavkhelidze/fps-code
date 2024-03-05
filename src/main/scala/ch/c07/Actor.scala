@@ -22,7 +22,6 @@ class Actor[A](executor: ExecutorService)(
     head.getAndSet(n).lazySet(n)
     trySchedule()
 
-
   def contramap[B](f: B => A): Actor[B] =
     new Actor[B](executor)((b: B) => this ! f(b), onError)
 

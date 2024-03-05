@@ -6,19 +6,19 @@ enum Either[+E, +A] {
   case Right(value: A)
 
   def map[B](f: A => B): Either[E, B] = this match {
-    case Left(e)  => Left(e)
+    case Left(e) => Left(e)
     case Right(a) => Right(f(a))
   }
 
   def orElse[EE >: E, B >: A](b: => Either[EE, B]): Either[EE, B] =
     this match {
-      case Left(_)  => b
+      case Left(_) => b
       case Right(x) => Right(x)
     }
 
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] =
     this match {
-      case Left(e)  => Left(e)
+      case Left(e) => Left(e)
       case Right(a) => f(a)
     }
 

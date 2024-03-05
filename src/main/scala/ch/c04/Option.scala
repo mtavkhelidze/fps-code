@@ -16,12 +16,12 @@ enum Option[+A] {
 
   infix def map[B](f: A => B): Option[B] = this match {
     case Some(get) => Some(f(get))
-    case None      => None
+    case None => None
   }
 
   def getOrElse[B >: A](default: => B): B = this match {
     case Some(get) => get
-    case None      => default
+    case None => default
   }
 }
 

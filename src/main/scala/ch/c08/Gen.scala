@@ -3,48 +3,75 @@ package ch.c08
 
 import ch.c06.{RNG, State}
 import ch.c06.RNG.SimpleRNG
-import ch.c08.Prop.{Result, TestCases}
+import ch.c08.Prop.Result
 import ch.c08.Prop.Result.{Falsified, Passed}
 
 import scala.annotation.targetName
 
-opaque type SuccessCount <: Int = Int
-opaque type FailedCase <: String = String
-object FailedCase {
+opaque type SuccessCount = Int
+
+opaque type FailedCase = String
+object FailedCase:
   extension (f: FailedCase) def string: String = f
   def fromString(s: String): FailedCase = s
-}
-opaque type Prop = (TestCases, RNG) => Result
+
+opaque type MaxSize = Int
+object MaxSize:
+  extension (ms: MaxSize) def toInt: Int = ms
+  def fromInt(n: Int): MaxSize = n
+
+opaque type TestCases = Int
+object TestCases:
+  extension (tc: TestCases) def toInt: Int = tc
+  def fromInt(n: Int): TestCases = n
+
+opaque type Prop = (MaxSize, TestCases, RNG) => Result
 object Prop {
   extension (self: Prop) {
-    def run(): Unit = self(100, RNG.SimpleRNG(System.currentTimeMillis)) match
-      case Passed => println(s"+ OK, Passed")
-      case Result.Falsified(msg, n) =>
-        println(s"! Falsified after $n: $msg")
+    def run(): Unit =
+      self(100, 100, RNG.SimpleRNG(System.currentTimeMillis)) match
+        case Passed => println(s"+ OK, Passed")
+        case Result.Falsified(msg, n) =>
+          println(s"! Falsified after $n: $msg")
 
     @targetName("or")
-    infix def ||(that: Prop): Prop = (n, rng) =>
-      self.tag("or-left")(n, rng) match {
-        case Falsified(msg, _) => that.tag("or-right").tag(msg.string)(n, rng)
+    infix def ||(that: Prop): Prop = (ms, n, rng) =>
+      self.tag("or-left")(ms, n, rng) match {
+        case Falsified(msg, _) =>
+          that.tag("or-right").tag(msg.string)(ms, n, rng)
         case x => x
       }
 
-    @targetName("and")
-    infix def &&(that: Prop): Prop = (n, rng) =>
-      self.tag("and-left")(n, rng) match {
-        case Passed => that.tag("and-right")(n, rng)
+    @targetName("andAnd")
+    infix def &&(that: Prop): Prop = (ms, n, rng) =>
+      self.tag("and-left")(ms, n, rng) match {
+        case Passed => that.tag("and-right")(ms, n, rng)
         case x => x
       }
 
-    def tag(t: String): Prop = (n, rng) =>
-      self(n, rng) match
+    def tag(t: String): Prop = (ms, n, rng) =>
+      self(ms, n, rng) match
         case Falsified(e, c) =>
           Falsified(FailedCase.fromString(s"$t($e)"), c)
         case x => x
   }
-  opaque type TestCases = Int
 
-  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = (n, rng) =>
+  @targetName("forAllSized")
+  def forAll[A](sg: SGen[A])(f: A => Boolean): Prop =
+    (ms, n, rng) =>
+      val casesPerSize = (n - 1) / ms + 1
+      val props: LazyList[Prop] = LazyList
+        .from(0)
+        .take((n min ms) + 1)
+        .map(i => forAll(sg(i))(f))
+      val prop: Prop =
+        props
+          .map[Prop](p => (ms, _, rng) => p(ms, casesPerSize, rng))
+          .toList
+          .reduce(_ && _)
+      prop(ms, n, rng)
+
+  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = (ms, n, rng) =>
     randomLazyList(as)(rng)
       .zip(LazyList.from(0))
       .take(n)
@@ -129,6 +156,5 @@ object SGen {
 
     def flatMap[B](f: A => SGen[B]): SGen[B] = n =>
       self(n).flatMap(a => f(a)(n))
-
   }
 }

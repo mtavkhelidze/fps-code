@@ -9,9 +9,9 @@ enum Validated[+E, +A] {
       b: Validated[EE, B],
   )(f: (A, B) => C)(using combine: (EE, EE) => EE): Validated[EE, C] =
     (this, b) match {
-      case (Valid(aa), Valid(bb))     => Valid(f(aa, bb))
-      case (Invalid(es), Valid(_))    => Invalid(es)
-      case (Valid(_), Invalid(es))    => Invalid(es)
+      case (Valid(aa), Valid(bb)) => Valid(f(aa, bb))
+      case (Invalid(es), Valid(_)) => Invalid(es)
+      case (Valid(_), Invalid(es)) => Invalid(es)
       case (Invalid(ae), Invalid(be)) => Invalid(combine(ae, be))
     }
 }
@@ -40,17 +40,17 @@ object Validated {
 
   extension [E, A](v: Validated[E, A])
     def toEither: Either[E, A] = v match {
-      case Valid(a)   => Either.Right(a)
+      case Valid(a) => Either.Right(a)
       case Invalid(e) => Either.Left(e)
     }
 
     def map[B](f: A => B): Validated[E, B] = v match {
-      case Valid(a)   => Valid(f(a))
+      case Valid(a) => Valid(f(a))
       case Invalid(e) => Invalid(e)
     }
 
     def flatMap[B](f: A => Validated[E, B]): Validated[E, B] = v match {
-      case Valid(a)   => f(a)
+      case Valid(a) => f(a)
       case Invalid(e) => Invalid(e)
     }
 }
