@@ -8,12 +8,12 @@ import munit.FunSuite
 
 class E08Test extends FunSuite {
   test("maxProp") {
-    val smallInt = Gen.choose(-10, 10)
+    val smallInt = Gen.choose(10, 100)
     val maxProp = Prop.forAll(smallInt.nonEmptyList) { ns =>
       val max = ns.max
       ns.exists(_ > max)
     }
 
-    maxProp.run(MaxSize.fromInt(21), TestCases.fromInt(13))
+    maxProp.run(MaxSize.fromInt(5), TestCases.fromInt(7))
   }
 }

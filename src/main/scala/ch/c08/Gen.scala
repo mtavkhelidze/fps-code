@@ -19,43 +19,38 @@ object Prop {
 
   @targetName("forAllSized")
   def forAll[A](g: SGen[A])(f: A => Boolean): Prop =
-    (max, n, rng) =>
-      val casesPerSize = (n - 1) / max.toInt + 1
+    (maxCases, nCases, rng) =>
+      val casesPerSize = (nCases - 1) / maxCases + 1
       val props: LazyList[Prop] =
         LazyList
           .from(0)
-          .take((n min max) + 1)
+          .take((nCases min maxCases) + 1)
           .map(i => forAll(g(i))(f))
       val prop: Prop =
         props
-          .map[Prop](p => (max, n, rng) => p(max, casesPerSize, rng))
+          .map[Prop](p => (max, _, rng) => p(max, casesPerSize, rng))
           .toList
           .reduce(_ && _)
-      prop(max, n, rng)
+      prop(maxCases, nCases, rng)
 
-  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = (ms, n, rng) =>
-    println(s"$ms, $n")
+  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = (_, n, rng) =>
     randomLazyList(as)(rng)
       .zip(LazyList.from(0))
       .take(n)
       .map { case (a, i) =>
-        try {
-          if f(a) then Passed
-          else Falsified(a.toString, i)
-        } catch {
-          case e: Exception => Falsified(buildMsg(a, e), i)
-        }
+        try if f(a) then Passed else Falsified(a.toString, i)
+        catch case e: Exception => Falsified(buildMsg(a, e), i)
       }
       .find(_.isFalsified)
       .getOrElse(Passed)
-
-  def randomLazyList[A](g: Gen[A])(rng: RNG): LazyList[A] =
-    LazyList.unfold(rng)(rng => Some(g.run(rng)))
 
   def buildMsg[A](a: A, e: Exception): String =
     s"test case: $a\n" +
       s"generated an exception: ${e.getMessage}\n" +
       s"stack trace:\n ${e.getStackTrace.mkString("\n")}"
+
+  def randomLazyList[A](g: Gen[A])(rng: RNG): LazyList[A] =
+    LazyList.unfold(rng)(rng => Some(g.run(rng)))
 
   extension (self: Prop) {
     def check(
@@ -70,14 +65,14 @@ object Prop {
         testCases: TestCases = 100,
         rng: RNG = SimpleRNG(System.currentTimeMillis),
     ): Unit =
-      self(maxSize, testCases, rng) match
+      self.check(maxSize, testCases, rng) match
         case Passed => println(s"+ OK, Passed")
         case Falsified(msg, n) =>
           println(s"! Falsified after $n: $msg")
         case Proved => println(s"+ OK, Proved")
 
     @targetName("or")
-    infix def ||(that: Prop): Prop = (ms, n, rng) =>
+    def ||(that: Prop): Prop = (ms, n, rng) =>
       self.tag("or-left")(ms, n, rng) match {
         case Falsified(msg, _) =>
           that.tag("or-right").tag(msg.string)(ms, n, rng)
