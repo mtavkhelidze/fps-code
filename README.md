@@ -3,21 +3,22 @@ Functional Programming in Scala
 _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second Edition](https://www.amazon.com/Functional-Programming-Second-Michael-Pilquist/dp/1617299588) using Scala 3_
 
 <br/>[Part One: Introduction to functional programming](#part-one-introduction-to-functional-programming)<br/>
-&nbsp;&nbsp;[Chapter 1: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
-&nbsp;&nbsp;[Chapter 2: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
-&nbsp;&nbsp;[Chapter 3: Functional data structures](#chapter-3-functional-data-structures)<br/>
-&nbsp;&nbsp;[Chapter 4: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
-&nbsp;&nbsp;[Chapter 5: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
-&nbsp;&nbsp;[Chapter 6: Purely functional state](#chapter-6-purely-functional-state)<br/>
+&nbsp;&nbsp;[Chapter 01: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
+&nbsp;&nbsp;[Chapter 02: Getting started with FP in Scala](#chapter-2-getting-started-with-fp-in-scala)<br/>
+&nbsp;&nbsp;[Chapter 03: Functional data structures](#chapter-3-functional-data-structures)<br/>
+&nbsp;&nbsp;[Chapter 04: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
+&nbsp;&nbsp;[Chapter 05: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
+&nbsp;&nbsp;[Chapter 06: Purely functional state](#chapter-6-purely-functional-state)<br/>
 <br/>
 [Part Two: Functional design and combinator libraries](#part-two-functional-design-and-combinator-libraries)<br/>
-&nbsp;&nbsp;[Chapter 7: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
-&nbsp;&nbsp;[Chapter 8: Property-based testing](#chapter-8-property-based-testing)<br/>
+&nbsp;&nbsp;[Chapter 07: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
+&nbsp;&nbsp;[Chapter 08: Property-based testing](#chapter-8-property-based-testing)<br/>
+&nbsp;&nbsp;[Chapter 09: Parser combinators](#chapter-9-parser-combinators)</br>
 
 
 ### Part One: Introduction to functional programming
 
-#### Chapter 1: What is Functional Programming
+#### Chapter 01: What is Functional Programming
 
 - Functional programming is the construction of programs using
   only pure functions—functions that do not have side effects.
@@ -73,7 +74,7 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
 - Functional programming enables local reasoning and allows
   the embedding of smaller programs within larger programs.
 
-#### Chapter 2: Getting started with FP in Scala
+#### Chapter 02: Getting started with FP in Scala
 
 - Scala is a mixed paradigm language, blending concepts from
   both objected-oriented programming and functional programming.
@@ -111,7 +112,7 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
 - Determining the implementation of a polymorphic function from its signature
   is known as following types to implementations or type-driven development.
 
-#### Chapter 3: Functional data structures
+#### Chapter 03: Functional data structures
 
 - Functional data structures are immutable and
   are operated on using only pure functions.
@@ -144,7 +145,7 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
 - Extension methods allow object-oriented style methods to be defined for
   a type in an ad hoc fashion separate from the definition of the type.
 
-#### Chapter 4: Handling errors without exceptions
+#### Chapter 04: Handling errors without exceptions
 
 **Quotes**
 
@@ -179,7 +180,7 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
   error from every function call. These higher-order functions
   are defined for each of the various error-handling data types.
 
-#### Chapter 5: Strictness and laziness
+#### Chapter 05: Strictness and laziness
 
 - Non-strictness is a useful technique that allows
   separation of concerns and improved modularity.
@@ -210,7 +211,7 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
   function, is an example of a _corecursive_ function. Corecursive functions
   produce data and continue to run as long as they are productive.
 
-#### Chapter 6: Purely functional state
+#### Chapter 06: Purely functional state
 
 **Quotes**
 
@@ -255,7 +256,7 @@ encoding_</u> and only refactoring o opaque types if
 
 ### Part Two: Functional design and combinator libraries
 
-#### Chapter 7: Purely functional parallelism
+#### Chapter 07: Purely functional parallelism
 
 * No existing library is beyond reexamination. Most libraries contain
   arbitrary design choices. Experimenting with building alternative
@@ -286,7 +287,7 @@ encoding_</u> and only refactoring o opaque types if
   implement purely functional APIs, as demonstrated with the
   implementation of `map2` for the non-blocking `Par`.
 
-#### Chapter 8: Property-based testing
+#### Chapter 08: Property-based testing
 
 * Properties of our APIs can be automatically tested and, in some
   cases, proven using property-based testing.
@@ -316,3 +317,5 @@ encoding_</u> and only refactoring o opaque types if
   fails the property.
 * Combinators like `map` and `flatMap` continue to appear in data types we
   create, and their implementations satisfy the same laws.
+
+#### Chapter 09: Parser combinators
