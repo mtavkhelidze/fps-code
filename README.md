@@ -287,3 +287,32 @@ encoding_</u> and only refactoring o opaque types if
   implementation of `map2` for the non-blocking `Par`.
 
 #### Chapter 8: Property-based testing
+
+* Properties of our APIs can be automatically tested and, in some
+  cases, proven using property-based testing.
+* A property can be expressed as a function that takes arbitrary input
+  values and asserts a desired outcome based on those inputs.
+* In the library developed in this chapter, the `Prop` type is used to
+  model these properties.
+* Properties defined in this way assert various invariants about the
+  functionality being tested—things that should be true for all
+  possible input values. An example of such a property is that
+  reversing a list and then summing the elements should be the same as
+  summing the original list.
+* Defining properties for arbitrary input values requires a way of
+  generating such values.
+* In the library developed in this chapter, the `Gen` and `SGen` types
+  are used for arbitrary value generation.
+* Test case minimization is the ability of a property-based testing
+  library to find the smallest input values that fail a property.
+* Exhaustive test case generation is the ability to generate all
+  possible inputs to a property. This is only possible for finite
+  domains and only practically possible when the size of the domain is
+  small.
+* If every possible input to a property is tested and all pass, then
+  the property is proved true. If instead, the property simply does
+  not fail for any of the generated inputs, then the property is
+  passed. There might still be some input that wasn’t generated but
+  fails the property.
+* Combinators like `map` and `flatMap` continue to appear in data types we
+  create, and their implementations satisfy the same laws.
