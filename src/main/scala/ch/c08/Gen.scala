@@ -17,6 +17,9 @@ object Prop {
   opaque type TestCases <: Int = Int
   opaque type MaxSize <: Int = Int
 
+  def verify(p: => Boolean): Prop =
+    (_, _, _) => if p then Proved else Falsified("()", 0)
+
   @targetName("forAllSized")
   def forAll[A](g: SGen[A])(f: A => Boolean): Prop =
     (maxCases, nCases, rng) =>
@@ -66,10 +69,10 @@ object Prop {
         rng: RNG = SimpleRNG(System.currentTimeMillis),
     ): Unit =
       self.check(maxSize, testCases, rng) match
-        case Passed => println(s"+ OK, Passed")
+        case Passed => println(s"+ OK, Passed $testCases tests.")
+        case Proved => println(s"+ OK, Proved property.")
         case Falsified(msg, n) =>
-          println(s"! Falsified after $n: $msg")
-        case Proved => println(s"+ OK, Proved")
+          println(s"! Falsified after $n passed tests:\n$msg.")
 
     @targetName("or")
     def ||(that: Prop): Prop = (ms, n, rng) =>
@@ -89,13 +92,14 @@ object Prop {
       (max, n, rng) =>
         self(max, n, rng) match
           case Falsified(e, c) =>
-            Falsified(FailedCase.fromString(s"$msg($e)"), c)
+            val str = if e.toString.startsWith(msg) then e else s"$msg($e)"
+            Falsified(FailedCase.fromString(str), c)
           case x => x
   }
 
   enum Result {
-    case Passed
     case Falsified(failure: FailedCase, success: SuccessCount)
+    case Passed
     case Proved
 
     def isFalsified: Boolean = this match
