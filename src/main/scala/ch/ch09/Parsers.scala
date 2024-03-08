@@ -4,23 +4,26 @@ package ch.ch09
 import ch.c08.{Gen, Prop}
 
 import scala.annotation.targetName
+import scala.util.matching.Regex
 
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 trait Parsers[ParserError, Parser[+_]] {
   extension [A](kore: Parser[A]) {
-    def product[B](sore: => Parser[B]): Parser[(A, B)] = ???
+    def flatMap[B](f: A => Parser[B]): Parser[B]
+
+    def product[B](sore: => Parser[B]): Parser[(A, B)]
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
 
-    def slice: Parser[String] = ???
+    def slice: Parser[String]
 
-    infix def map[B](f: A => B): Parser[B] = ???
+    infix def map[B](f: A => B): Parser[B]
 
-    def run(input: String): Either[ParserError, A] = ???
+    def run(input: String): Either[ParserError, A]
 
     @targetName("orParser")
     def |(sore: => Parser[A]): Parser[A] = kore or sore
-    infix def or(sore: => Parser[A]): Parser[A] = ???
+    infix def or(sore: => Parser[A]): Parser[A]
 
     def listOfN(n: Int): Parser[List[A]] =
       if n <= 0 then succeed(Nil) else kore.map2(listOfN(n - 1))(_ :: _)
@@ -30,22 +33,25 @@ trait Parsers[ParserError, Parser[+_]] {
     def many: Parser[List[A]] =
       kore.map2(kore.many)(_ :: _) | succeed(Nil)
 
+    def oneOrMany: Parser[List[A]] =
+      kore.map2(kore.many)(_ :: _)
+
     def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
       kore ** sore map f.tupled
+
+    def string(s: String): Parser[String]
+
+    def fail(msg: String): Parser[Nothing]
+
+    def succeed[T](a: T): Parser[T]
+
+    def defaultSucceed[T](a: T): Parser[T] =
+      string("").map(_ => a)
+
+    def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
+
+    def regex(r: Regex): Parser[String]
   }
-
-  def many1[A](p: Parser[A]): Parser[List[A]] =
-    p.map2(p.many)(_ :: _)
-
-  def succeed[A](a: A): Parser[A] = string("").map(_ => a)
-
-  def string(s: String): Parser[String] = ???
-
-  def countChars(c: Char): Parser[Int] = ???
-
-  def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
-
-  def startingWith(c: Char): Parser[String] = ???
 
   object Laws {
     def unBiasL[A, B, C](t: ((A, B), C)): (A, B, C) = (t._1._1, t._1._2, t._2)
