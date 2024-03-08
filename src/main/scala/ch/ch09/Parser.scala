@@ -8,9 +8,6 @@ import scala.annotation.targetName
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 trait Parsers[ParserError, Parser[+_]] {
   extension [A](kore: Parser[A]) {
-    def map2[B, C](sore: Parser[B])(f: (A, B) => C): Parser[C] =
-      kore ** sore map f.tupled
-
     def product[B](sore: Parser[B]): Parser[(A, B)] = ???
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
@@ -18,10 +15,6 @@ trait Parsers[ParserError, Parser[+_]] {
     def slice: Parser[String] = ???
 
     infix def map[B](f: A => B): Parser[B] = ???
-
-    def many: Parser[List[A]] = ???
-
-    def many1: Parser[List[A]] = ???
 
     def run(input: String): Either[ParserError, A] = ???
 
@@ -34,17 +27,28 @@ trait Parsers[ParserError, Parser[+_]] {
     def numOf(c: Char): Parser[Int] = char(c).many.map(_.size)
   }
 
+  def many1[A](p: Parser[A]): Parser[List[A]] =
+    map2(p, many(p))(_ :: _)
+
+  def map2[A, B, C](p1: Parser[A], p2: Parser[B])(f: (A, B) => C): Parser[C] =
+    p1 ** p2 map f.tupled
+
+  def many[A](p: Parser[A]): Parser[List[A]] = ???
+
   def succeed[A](a: A): Parser[A] = string("").map(_ => a)
+
+  def string(s: String): Parser[String] = ???
 
   def countChars(c: Char): Parser[Int] = ???
 
   def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
 
-  def string(s: String): Parser[String] = ???
-
   def startingWith(c: Char): Parser[String] = ???
 
   object Laws {
+    def unBiasL[A, B, C](t: ((A, B), C)): (A, B, C) = (t._1._1, t._1._2, t._2)
+    def unBiasR[A, B, C](t: (A, (B, C))): (A, B, C) = (t._1, t._2._1, t._2._2)
+
     def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
       equal(p, p.map(identity))(in)
 
