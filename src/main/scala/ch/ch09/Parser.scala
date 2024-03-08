@@ -8,7 +8,7 @@ import scala.annotation.targetName
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 trait Parsers[ParserError, Parser[+_]] {
   extension [A](kore: Parser[A]) {
-    def product[B](sore: Parser[B]): Parser[(A, B)] = ???
+    def product[B](sore: => Parser[B]): Parser[(A, B)] = ???
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
 
@@ -19,21 +19,23 @@ trait Parsers[ParserError, Parser[+_]] {
     def run(input: String): Either[ParserError, A] = ???
 
     @targetName("orParser")
-    def |(sore: Parser[A]): Parser[A] = kore or sore
-    infix def or(sore: Parser[A]): Parser[A] = ???
+    def |(sore: => Parser[A]): Parser[A] = kore or sore
+    infix def or(sore: => Parser[A]): Parser[A] = ???
 
-    def listOfN(n: Int): Parser[List[A]] = ???
+    def listOfN(n: Int): Parser[List[A]] =
+      if n <= 0 then succeed(Nil) else kore.map2(listOfN(n - 1))(_ :: _)
 
     def numOf(c: Char): Parser[Int] = char(c).many.map(_.size)
+
+    def many: Parser[List[A]] =
+      kore.map2(kore.many)(_ :: _) | succeed(Nil)
+
+    def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
+      kore ** sore map f.tupled
   }
 
   def many1[A](p: Parser[A]): Parser[List[A]] =
-    map2(p, many(p))(_ :: _)
-
-  def map2[A, B, C](p1: Parser[A], p2: Parser[B])(f: (A, B) => C): Parser[C] =
-    p1 ** p2 map f.tupled
-
-  def many[A](p: Parser[A]): Parser[List[A]] = ???
+    p.map2(p.many)(_ :: _)
 
   def succeed[A](a: A): Parser[A] = string("").map(_ => a)
 
