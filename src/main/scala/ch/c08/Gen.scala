@@ -9,11 +9,11 @@ import ch.c08.Prop.Result.{Falsified, Passed, Proved}
 import scala.annotation.targetName
 import scala.compiletime.{codeOf, error}
 
-opaque type Prop = (MaxSize, TestCases, RNG) => Result
+type Prop = (MaxSize, TestCases, RNG) => Result
 object Prop {
 
   opaque type SuccessCount <: Int = Int
-  opaque type FailedCase = String
+  opaque type FailedCase <: String = String
   opaque type TestCases <: Int = Int
   opaque type MaxSize <: Int = Int
 
