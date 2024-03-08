@@ -11,18 +11,23 @@ trait Parsers[ParserError, Parser[+_]] {
   extension [A](kore: Parser[A]) {
     def flatMap[B](f: A => Parser[B]): Parser[B]
 
-    def product[B](sore: => Parser[B]): Parser[(A, B)]
+    def product[B](sore: => Parser[B]): Parser[(A, B)] =
+      kore.flatMap(a => sore.map(b => (a, b)))
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
 
+    def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
+      kore.flatMap(a => sore.map(b => f(a, b)))
+
     def slice: Parser[String]
 
-    infix def map[B](f: A => B): Parser[B]
+    infix def map[B](f: A => B): Parser[B] =
+      kore.flatMap(a => succeed(f(a)))
 
     def run(input: String): Either[ParserError, A]
-
     @targetName("orParser")
     def |(sore: => Parser[A]): Parser[A] = kore or sore
+
     infix def or(sore: => Parser[A]): Parser[A]
 
     def listOfN(n: Int): Parser[List[A]] =
@@ -35,9 +40,6 @@ trait Parsers[ParserError, Parser[+_]] {
 
     def oneOrMany: Parser[List[A]] =
       kore.map2(kore.many)(_ :: _)
-
-    def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
-      kore ** sore map f.tupled
 
     def string(s: String): Parser[String]
 
