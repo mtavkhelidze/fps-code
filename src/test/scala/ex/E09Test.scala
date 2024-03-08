@@ -1,14 +1,12 @@
 package ge.zgharbi.study.fps
 package ex
 
+import ge.zgharbi.study.fps.ch.ch09.Parsers
 import munit.FunSuite
 
 class E09ParserTest extends FunSuite {
-
-  import ch.ch09.Parser
-  import ch.ch09.Parser.*
-  test("Parser#run") {
-    char('a').run("a")
+  test("Parser#char") {
+    val p = new Parsers[String, Option] {}
   }
 
 }
