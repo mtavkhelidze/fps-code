@@ -15,7 +15,9 @@ object JSON {
     import P.*
     def token(s: String): Parser[String] = string(s).token
 
-    def value: Parser[JSON] = lit
+    def value: Parser[JSON] = lit | array | obj
+
+    def document: Parser[JSON] = whitespace *> (array | obj) <* eof
 
     def lit: Parser[JSON] = (
       token("null").as(JNull) |
@@ -25,11 +27,16 @@ object JSON {
         token("false").as(JBool(false))
     ).scope("literal")
 
-    def document: Parser[JSON] = whitespace *> (array | obj) <* eof
-    def obj: Parser[JSON] = ???
     def array: Parser[JSON] =
       (token("[") *>
         value.sep(token(",")).map(vs => JArray(vs.toIndexedSeq)) <*
         token("]")).scope("array")
+
+    def keyVal: Parser[(String, JSON)] = escapedQuoted ** (token(":") *> value)
+
+    def obj: Parser[JSON] =
+      (token("{") *> keyVal
+        .sep(token(":"))
+        .map(vs => JObject(vs.toMap)) <* token("}")).scope("object")
     ???
 }
