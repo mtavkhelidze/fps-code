@@ -1,6 +1,12 @@
+//noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 package ge.zgharbi.study.fps
 package ch.ch09
 
+enum JsonError {
+  case ExpectedComma(msg: String)
+  case ExpectedColon(msg: String)
+  case ExpectedValue(msg: String)
+}
 enum JSON {
   case JArray(get: IndexedSeq[JSON])
   case JBool(get: Boolean)

@@ -6,3 +6,6 @@ target
 *~
 .bloop/
 .scala-build/
+.metals/
+metals
+project/metals.sbt

@@ -1,3 +1,4 @@
+//noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 package ge.zgharbi.study.fps
 package ch.ch09
 
@@ -7,7 +8,6 @@ import java.util.regex.Pattern
 import scala.annotation.targetName
 import scala.util.matching.Regex
 
-//noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 trait Parsers[Parser[+?]] {
   def regex(r: Regex): Parser[String]
 
@@ -79,7 +79,7 @@ trait Parsers[Parser[+?]] {
     infix def map[B](f: A => B): Parser[B] =
       kore.flatMap(a => succeed(f(a)))
 
-    def run(input: String): Either[String, A]
+    def run(input: String): Either[ParseError, A]
 
     def listOfN(n: Int): Parser[List[A]] =
       if n <= 0 then succeed(Nil) else kore.map2(listOfN(n - 1))(_ :: _)
@@ -119,4 +119,55 @@ trait Parsers[Parser[+?]] {
     def stringLas(p: Parser[String])(in: Gen[String]): Prop =
       Prop.forAll(in)(c => p.run(c).isRight)
   }
+}
+
+case class ParseError(stack: List[(Location, String)]) {
+  def push(loc: Location, msg: String): ParseError =
+    copy(stack = (loc, msg) :: stack)
+
+  def label(s: String): ParseError =
+    ParseError(latestLoc.map((_, s)).toList)
+
+  def latestLoc: Option[Location] =
+    if stack.isEmpty then None else Some(stack.head._1)
+
+  def latest: Option[(Location, String)] =
+    stack.lastOption
+
+  override def toString: String =
+    if stack.isEmpty then "no error message"
+    else
+      val collapsed = collapseStack(stack)
+      val context =
+        collapsed.lastOption.map("\n\n" + _._1.currentLine).getOrElse("") +
+          collapsed.lastOption.map("\n" + _._1.columnCaret).getOrElse("")
+      collapsed
+        .map((loc, msg) => s"${formatLoc(loc)} $msg")
+        .mkString("\n") + context
+
+  def formatLoc(l: Location): String = s"${l.line}.${l.col}"
+
+  def collapseStack(s: List[(Location, String)]): List[(Location, String)] =
+    s.groupBy(_._1)
+      .view
+      .mapValues(_.map(_._2).mkString("; "))
+      .toList
+      .sortBy(_._1.offset)
+}
+
+case class Location(input: String, offset: Int = 0) {
+  lazy val line: Int = input.slice(0, offset + 1).count(_ == '\n') + 1
+  lazy val col: Int = input.slice(0, offset + 1).lastIndexOf('\n') match {
+    case -1 => offset + 1
+    case lineStart => offset - lineStart
+  }
+
+  def currentLine: String =
+    if input.length > 1
+    then
+      val itr = input.linesIterator.drop(line - 1)
+      if itr.hasNext then itr.next() else ""
+    else ""
+
+  def columnCaret: String = (" " * (col - 1)) + "^"
 }
