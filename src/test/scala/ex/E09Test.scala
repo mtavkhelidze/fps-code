@@ -6,7 +6,6 @@ import munit.FunSuite
 
 class E09ParserTest extends FunSuite {
   test("Parser#char") {
-    val p = new Parsers[String, Option] {}
   }
 
 }

@@ -3,32 +3,83 @@ package ch.ch09
 
 import ch.c08.{Gen, Prop}
 
+import java.util.regex.Pattern
 import scala.annotation.targetName
 import scala.util.matching.Regex
 
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
-trait Parsers[ParserError, Parser[+_]] {
+trait Parsers[Parser[+?]] {
+  def regex(r: Regex): Parser[String]
+
+  def double: Parser[Double] =
+    doubleString.map(_.toDouble).label("double literal")
+
+  def doubleString: Parser[String] =
+    regex("[-+]?([0-9]*\\.)?[0-9]+([eE][-+]?[0-9]+)?".r).token
+
+  def escapedQuoted: Parser[String] = quoted.label("string literal").token
+
+  /** Unescaped string literals, like "foo" or "bar". */
+  def quoted: Parser[String] = string("\"") *> thru("\"").map(_.dropRight(1))
+
+  /** Parser which consumes reluctantly until it encounters the given string. */
+  def thru(s: String): Parser[String] = regex((".*?" + Pattern.quote(s)).r)
+
+  def whitespace: Parser[String] = regex("[ \\t\\n\\r]+".r)
+
+  def eof: Parser[String] =
+    regex("\\z".r).label("unexpected trailing characters")
+
+  def string(s: String): Parser[String]
   extension [A](kore: Parser[A]) {
+    def token: Parser[A] = kore.attempt <* whitespace
+
+    def as[B](b: B): Parser[B] = kore.slice.map(_ => b)
+
+    def scope(msg: String): Parser[A]
+
+    def attempt: Parser[A]
+
+    def sep(separator: Parser[Any]): Parser[List[A]] =
+      kore.sep1(separator) | succeed(Nil)
+
+    // region Primitives
+
+    def sep1(separator: Parser[Any]): Parser[List[A]] =
+      kore.map2((separator *> kore).many)(_ :: _)
+
+    def slice: Parser[String]
+
+    def succeed[T](a: T): Parser[T]
+
     def flatMap[B](f: A => Parser[B]): Parser[B]
+
+    @targetName("orParser")
+    def |(sore: => Parser[A]): Parser[A] = kore or sore
+    infix def or(sore: => Parser[A]): Parser[A]
 
     def product[B](sore: => Parser[B]): Parser[(A, B)] =
       kore.flatMap(a => sore.map(b => (a, b)))
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
 
+    // endregion
+
+    def label(s: String): Parser[A]
+
+    @targetName("keepRight")
+    def *>[B](sore: => Parser[B]): Parser[B] = kore.map2(sore)((_, x) => x)
+
+    @targetName("keepLeft")
+    def <*[B](sore: => Parser[B]): Parser[A] = kore.map2(sore)((x, _) => x)
+
     def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
       kore.flatMap(a => sore.map(b => f(a, b)))
-
-    def slice: Parser[String]
 
     infix def map[B](f: A => B): Parser[B] =
       kore.flatMap(a => succeed(f(a)))
 
-    def run(input: String): Either[ParserError, A]
-    @targetName("orParser")
-    def |(sore: => Parser[A]): Parser[A] = kore or sore
-
-    infix def or(sore: => Parser[A]): Parser[A]
+    def run(input: String): Either[String, A]
 
     def listOfN(n: Int): Parser[List[A]] =
       if n <= 0 then succeed(Nil) else kore.map2(listOfN(n - 1))(_ :: _)
@@ -41,18 +92,12 @@ trait Parsers[ParserError, Parser[+_]] {
     def oneOrMany: Parser[List[A]] =
       kore.map2(kore.many)(_ :: _)
 
-    def string(s: String): Parser[String]
-
-    def fail(msg: String): Parser[Nothing]
-
-    def succeed[T](a: T): Parser[T]
-
     def defaultSucceed[T](a: T): Parser[T] =
       string("").map(_ => a)
 
-    def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
+    def fail(msg: String): Parser[Nothing]
 
-    def regex(r: Regex): Parser[String]
+    def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
   }
 
   object Laws {
