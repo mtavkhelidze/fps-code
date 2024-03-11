@@ -157,6 +157,8 @@ case class ParseError(stack: List[(Location, String)]) {
 }
 
 case class Location(input: String, offset: Int = 0) {
+  def toError(msg: String): ParseError = ParseError(List((this, msg)))
+  
   lazy val line: Int = input.slice(0, offset + 1).count(_ == '\n') + 1
   lazy val col: Int = input.slice(0, offset + 1).lastIndexOf('\n') match {
     case -1 => offset + 1
