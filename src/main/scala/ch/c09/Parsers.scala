@@ -9,6 +9,8 @@ import scala.annotation.targetName
 import scala.util.matching.Regex
 
 trait Parsers[Parser[+?]] {
+  def string(s: String): Parser[String]
+
   def regex(r: Regex): Parser[String]
 
   def double: Parser[Double] =
@@ -30,48 +32,47 @@ trait Parsers[Parser[+?]] {
   def eof: Parser[String] =
     regex("\\z".r).label("unexpected trailing characters")
 
-  def string(s: String): Parser[String]
   extension [A](kore: Parser[A]) {
+    def slice: Parser[String]
+
+    def label(s: String): Parser[A]
+
+    def scope(msg: String): Parser[A]
+
+    def flatMap[B](f: A => Parser[B]): Parser[B]
+
+    def attempt: Parser[A]
+
+    infix def or(sore: => Parser[A]): Parser[A]
+
     def token: Parser[A] = kore.attempt <* whitespace
 
     def as[B](b: B): Parser[B] = kore.slice.map(_ => b)
 
-    def scope(msg: String): Parser[A]
-
-    def attempt: Parser[A]
-
     def sep(separator: Parser[Any]): Parser[List[A]] =
       kore.sep1(separator) | succeed(Nil)
-
-    // region Primitives
 
     def sep1(separator: Parser[Any]): Parser[List[A]] =
       kore.map2((separator *> kore).many)(_ :: _)
 
-    def slice: Parser[String]
-
     def succeed[T](a: T): Parser[T]
-
-    def flatMap[B](f: A => Parser[B]): Parser[B]
-
-    @targetName("orParser")
-    def |(sore: => Parser[A]): Parser[A] = kore or sore
-    infix def or(sore: => Parser[A]): Parser[A]
 
     def product[B](sore: => Parser[B]): Parser[(A, B)] =
       kore.flatMap(a => sore.map(b => (a, b)))
+
+    @targetName("orParser")
+    infix def |(sore: => Parser[A]): Parser[A] = kore or sore
+
     @targetName("productParser")
     infix def **[B](sore: Parser[B]): Parser[(A, B)] = product(sore)
 
-    // endregion
-
-    def label(s: String): Parser[A]
-
     @targetName("keepRight")
-    def *>[B](sore: => Parser[B]): Parser[B] = kore.map2(sore)((_, x) => x)
+    infix def *>[B](sore: => Parser[B]): Parser[B] =
+      kore.map2(sore)((_, x) => x)
 
     @targetName("keepLeft")
-    def <*[B](sore: => Parser[B]): Parser[A] = kore.map2(sore)((x, _) => x)
+    infix def <*[B](sore: => Parser[B]): Parser[A] =
+      kore.map2(sore)((x, _) => x)
 
     def map2[B, C](sore: => Parser[B])(f: (A, B) => C): Parser[C] =
       kore.flatMap(a => sore.map(b => f(a, b)))
@@ -107,11 +108,11 @@ trait Parsers[Parser[+?]] {
     def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
       equal(p, p.map(identity))(in)
 
-    def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
-      Prop.forAll(in)(s => p1.run(s) == p2.run(s))
-
     def orLaw[A](p: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
       equal(p or p2, p.map(identity) or p2.map(identity))(in)
+
+    def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
+      Prop.forAll(in)(s => p1.run(s) == p2.run(s))
 
     def charLas(p: Parser[Char])(in: Gen[Char]): Prop =
       Prop.forAll(in)(c => p.run(c.toString).isRight)
