@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 import scala.annotation.targetName
 import scala.util.matching.Regex
 
-trait Parsers[Parser[+?]] {
+trait Parsers[Parser[+_]] {
   def string(s: String): Parser[String]
 
   def regex(r: Regex): Parser[String]
