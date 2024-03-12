@@ -58,13 +58,14 @@ object ZedParser extends Parsers[ZedParser] {
     override def scope(s: String): ZedParser[A] =
       loc => kore(loc).mapError(_.push(loc, s))
 
+    override def label(l: String): ZedParser[A] =
+      loc => kore(loc).mapError(_.label(l))
+
     override def attempt: ZedParser[A] = ???
 
     override def fail(msg: String): ZedParser[Nothing] = ???
 
     override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = ???
-
-    override def label(l: String): ZedParser[A] = ???
 
     override def or(sore: => ZedParser[A]): ZedParser[A] = ???
 
