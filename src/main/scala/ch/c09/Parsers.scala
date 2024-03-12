@@ -32,7 +32,10 @@ trait Parsers[Parser[+_]] {
   def eof: Parser[String] =
     regex("\\z".r).label("unexpected trailing characters")
 
+  def succeed[T](a: T): Parser[T]
+
   extension [A](kore: Parser[A]) {
+
     def slice: Parser[String]
 
     def label(s: String): Parser[A]
@@ -54,8 +57,6 @@ trait Parsers[Parser[+_]] {
 
     def sep1(separator: Parser[Any]): Parser[List[A]] =
       kore.map2((separator *> kore).many)(_ :: _)
-
-    def succeed[T](a: T): Parser[T]
 
     def product[B](sore: => Parser[B]): Parser[(A, B)] =
       kore.flatMap(a => sore.map(b => (a, b)))

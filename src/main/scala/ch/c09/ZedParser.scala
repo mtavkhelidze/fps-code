@@ -1,7 +1,7 @@
 package ge.zgharbi.study.fps
 package ch.c09
 
-import ch.c09.Result.Failure
+import ch.c09.Result.{Failure, Success}
 import ch.ch09.{Location, ParseError, Parsers}
 
 import scala.util.matching.Regex
@@ -35,9 +35,9 @@ object ZedParser extends Parsers[ZedParser] {
       case None => Failure(loc.toError(s"Expected: $r"), false)
     }
 
+  override def succeed[A](a: A): ZedParser[A] = _ => Success(a, 0)
+
   extension [A](kore: ZedParser[A]) {
-    override def succeed[T](a: T): ZedParser[T] =
-      _ => Result.Success(a, 0)
 
     override def slice: ZedParser[String] =
       loc => Result.Success(loc.input.take(loc.offset), loc.offset)
