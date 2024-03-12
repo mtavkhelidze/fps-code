@@ -1,6 +1,6 @@
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 package ge.zgharbi.study.fps
-package ch.ch09
+package ch.c09
 
 import ch.c08.{Gen, Prop}
 
@@ -109,11 +109,11 @@ trait Parsers[Parser[+_]] {
     def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
       equal(p, p.map(identity))(in)
 
-    def orLaw[A](p: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
-      equal(p or p2, p.map(identity) or p2.map(identity))(in)
-
     def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
       Prop.forAll(in)(s => p1.run(s) == p2.run(s))
+
+    def orLaw[A](p: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
+      equal(p or p2, p.map(identity) or p2.map(identity))(in)
 
     def charLas(p: Parser[Char])(in: Gen[Char]): Prop =
       Prop.forAll(in)(c => p.run(c.toString).isRight)
@@ -131,7 +131,7 @@ case class ParseError(stack: List[(Location, String)]) {
     ParseError(latestLoc.map((_, s)).toList)
 
   def latestLoc: Option[Location] =
-    if stack.isEmpty then None else Some(stack.head._1)
+    latest.map(_(0))
 
   def latest: Option[(Location, String)] =
     stack.lastOption
@@ -158,15 +158,15 @@ case class ParseError(stack: List[(Location, String)]) {
 }
 
 case class Location(input: String, offset: Int = 0) {
-  def toError(msg: String): ParseError = ParseError(List((this, msg)))
-
-  def advanceBy(n: Int): Location = copy(offset = offset + n)
-
   lazy val line: Int = input.slice(0, offset + 1).count(_ == '\n') + 1
   lazy val col: Int = input.slice(0, offset + 1).lastIndexOf('\n') match {
     case -1 => offset + 1
     case lineStart => offset - lineStart
   }
+
+  def toError(msg: String): ParseError = ParseError(List((this, msg)))
+
+  def advanceBy(n: Int): Location = copy(offset = offset + n)
 
   def currentLine: String =
     if input.length > 1

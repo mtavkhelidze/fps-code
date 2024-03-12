@@ -1,6 +1,6 @@
 //noinspection ScalaWeakerAccess,ScalaUnusedSymbol
 package ge.zgharbi.study.fps
-package ch.ch09
+package ch.c09
 
 enum JsonError {
   case ExpectedComma(msg: String)
