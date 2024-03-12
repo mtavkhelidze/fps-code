@@ -11,6 +11,11 @@ opaque type ZedParser[+A] = Location => Result[A]
 enum Result[+A] {
   case Success(get: A, consumed: Int)
   case Failure(get: ParseError, isCommitted: Boolean) extends Result[Nothing]
+
+  def mapError(f: ParseError => ParseError): Result[A] = this match {
+    case Failure(e, c) => Failure(f(e), c)
+    case _ => this
+  }
 }
 
 object ZedParser extends Parsers[ZedParser] {
@@ -20,7 +25,11 @@ object ZedParser extends Parsers[ZedParser] {
     then Result.Success(s, s.length)
     else Result.Failure(loc.advanceBy(i).toError(s"Expected: $s"), i != 0)
 
-  private def firstNonMatchingIndex(input: String, needle: String, offset: Int): Int = {
+  private def firstNonMatchingIndex(
+      input: String,
+      needle: String,
+      offset: Int,
+  ): Int = {
     var i = 0
     while i + offset < input.length && i < needle.length do
       if input(i + offset) != needle(i) then return i
@@ -40,7 +49,14 @@ object ZedParser extends Parsers[ZedParser] {
   extension [A](kore: ZedParser[A]) {
 
     override def slice: ZedParser[String] =
-      loc => Result.Success(loc.input.take(loc.offset), loc.offset)
+      loc =>
+        kore(loc) match
+          case Success(_, n) =>
+            Success(loc.input.substring(loc.offset, loc.offset + n), n)
+          case f @ Failure(_, _) => f
+
+    override def scope(s: String): ZedParser[A] =
+      loc => kore(loc).mapError(_.push(loc, s))
 
     override def attempt: ZedParser[A] = ???
 
@@ -53,7 +69,5 @@ object ZedParser extends Parsers[ZedParser] {
     override def or(sore: => ZedParser[A]): ZedParser[A] = ???
 
     override def run(input: String): Either[ParseError, A] = ???
-
-    override def scope(s: String): ZedParser[A] = ???
   }
 }
