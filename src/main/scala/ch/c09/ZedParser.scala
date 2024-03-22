@@ -2,7 +2,6 @@ package ge.zgharbi.study.fps
 package ch.c09
 
 import ch.c09.Result.{Failure, Success}
-import ch.ch09.{Location, ParseError, Parsers}
 
 import scala.util.matching.Regex
 
@@ -19,6 +18,14 @@ enum Result[+A] {
 }
 
 object ZedParser extends Parsers[ZedParser] {
+  val nonNegativeInt: ZedParser[Int] =
+    for
+      nString <- regex("[0-9]+".r)
+      n <- nString.toIntOption match
+        case Some(n) => succeed(n)
+        case None => fail("expected an integer")
+    yield n
+
   override def string(s: String): ZedParser[String] = loc =>
     val i = firstNonMatchingIndex(loc.input, s, loc.offset)
     if i == -1
@@ -46,6 +53,8 @@ object ZedParser extends Parsers[ZedParser] {
 
   override def succeed[A](a: A): ZedParser[A] = _ => Success(a, 0)
 
+  override def fail(msg: String): ZedParser[Nothing] = ???
+
   extension [A](kore: ZedParser[A]) {
 
     override def slice: ZedParser[String] =
@@ -62,8 +71,6 @@ object ZedParser extends Parsers[ZedParser] {
       loc => kore(loc).mapError(_.label(l))
 
     override def attempt: ZedParser[A] = ???
-
-    override def fail(msg: String): ZedParser[Nothing] = ???
 
     override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = ???
 

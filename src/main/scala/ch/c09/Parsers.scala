@@ -34,6 +34,8 @@ trait Parsers[Parser[+_]] {
 
   def succeed[T](a: T): Parser[T]
 
+  def fail(msg: String): Parser[Nothing]
+
   extension [A](kore: Parser[A]) {
 
     def slice: Parser[String]
@@ -97,7 +99,6 @@ trait Parsers[Parser[+_]] {
     def defaultSucceed[T](a: T): Parser[T] =
       string("").map(_ => a)
 
-    def fail(msg: String): Parser[Nothing]
 
     def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
   }
