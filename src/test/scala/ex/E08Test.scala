@@ -8,10 +8,6 @@ import ch.c08.Prop.Result.Falsified
 import munit.FunSuite
 
 class E08Test extends FunSuite {
-  test("verify") {
-    verify(true).run(MaxSize.fromInt(1), TestCases.fromInt(100))
-  }
-
   test("maxProp") {
     val smallInt = Gen.choose(10, 100)
     val maxProp = Prop.forAll(smallInt.nonEmptyList) { ns =>

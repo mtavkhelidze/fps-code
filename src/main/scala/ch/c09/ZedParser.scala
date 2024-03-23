@@ -11,6 +11,10 @@ enum Result[+A] {
   case Success(get: A, consumed: Int)
   case Failure(get: ParseError, isCommitted: Boolean) extends Result[Nothing]
 
+  def extract: Either[ParseError, A] = this match
+    case Failure(e, _) => Left(e)
+    case Success(a, _) => Right(a)
+
   def mapError(f: ParseError => ParseError): Result[A] = this match {
     case Failure(e, c) => Failure(f(e), c)
     case _ => this
@@ -60,15 +64,16 @@ object ZedParser extends Parsers[ZedParser] {
     else input.length - offset
   }
 
-  override def regex(r: Regex): ZedParser[String] = loc =>
-    r.findPrefixOf(loc.input.substring(loc.offset)) match {
-      case Some(m) => Result.Success(m, m.length)
-      case None => Failure(loc.toError(s"Expected: $r"), false)
-    }
+  override def regex(r: Regex): ZedParser[String] =
+    loc =>
+      r.findPrefixOf(loc.remaining) match
+        case None => Failure(loc.toError(s"regex $r"), false)
+        case Some(m) => Success(m, m.length)
 
   override def succeed[A](a: A): ZedParser[A] = _ => Success(a, 0)
 
-  override def fail(msg: String): ZedParser[Nothing] = ???
+  override def fail(msg: String): ZedParser[Nothing] = loc =>
+    Failure(loc.toError(msg), false)
 
   extension [A](kore: ZedParser[A]) {
 
@@ -79,8 +84,8 @@ object ZedParser extends Parsers[ZedParser] {
             Success(loc.input.substring(loc.offset, loc.offset + n), n)
           case f @ Failure(_, _) => f
 
-    override def scope(s: String): ZedParser[A] =
-      loc => kore(loc).mapError(_.push(loc, s))
+    override def scope(msg: String): ZedParser[A] =
+      loc => kore(loc).mapError(_.push(loc, msg))
 
     override def label(l: String): ZedParser[A] =
       loc => kore(loc).mapError(_.label(l))
@@ -91,13 +96,15 @@ object ZedParser extends Parsers[ZedParser] {
       kore(loc) match
         case Success(a, n) =>
           f(a)(loc.advanceBy(n)).addCommit(n == 0).advanceSuccess(n)
-        case Failure(e, c) => Failure(e, c)
+        case f @ Failure(_, _) => f
 
     override def or(sore: => ZedParser[A]): ZedParser[A] = loc =>
       kore(loc) match
         case Failure(_, false) => sore(loc)
         case r => r
 
-    override def run(input: String): Either[ParseError, A] = ???
+    override def run(input: String): Either[ParseError, A] = kore(
+      Location(input),
+    ).extract
   }
 }

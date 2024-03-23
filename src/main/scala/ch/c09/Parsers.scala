@@ -27,7 +27,7 @@ trait Parsers[Parser[+_]] {
   /** Parser which consumes reluctantly until it encounters the given string. */
   def thru(s: String): Parser[String] = regex((".*?" + Pattern.quote(s)).r)
 
-  def whitespace: Parser[String] = regex("[ \\t\\n\\r]+".r)
+  def whitespace: Parser[String] = regex("\\s*".r)
 
   def eof: Parser[String] =
     regex("\\z".r).label("unexpected trailing characters")
@@ -37,6 +37,8 @@ trait Parsers[Parser[+_]] {
   def fail(msg: String): Parser[Nothing]
 
   extension [A](kore: Parser[A]) {
+
+    def root: Parser[A] = kore <* eof
 
     def slice: Parser[String]
 
@@ -167,6 +169,8 @@ case class Location(input: String, offset: Int = 0) {
   def toError(msg: String): ParseError = ParseError(List((this, msg)))
 
   def advanceBy(n: Int): Location = copy(offset = offset + n)
+
+  def remaining: String = input.substring(offset)
 
   def currentLine: String =
     if input.length > 1
