@@ -16,8 +16,16 @@ enum Result[+A] {
     case _ => this
   }
 
+  def addCommit(isCommitted: Boolean): Result[A] = this match {
+    case Failure(e, c) => Failure(e, c || isCommitted)
+    case _ => this
+  }
   def unCommit: Result[A] = this match
     case Failure(e, _) => Failure(e, false)
+    case _ => this
+
+  def advanceSuccess(n: Int): Result[A] = this match
+    case Success(a, m) => Success(a, n + m)
     case _ => this
 }
 
@@ -79,7 +87,11 @@ object ZedParser extends Parsers[ZedParser] {
 
     override def attempt: ZedParser[A] = loc => kore(loc).unCommit
 
-    override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = ???
+    override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = loc =>
+      kore(loc) match
+        case Success(a, n) =>
+          f(a)(loc.advanceBy(n)).addCommit(n == 0).advanceSuccess(n)
+        case Failure(e, c) => Failure(e, c)
 
     override def or(sore: => ZedParser[A]): ZedParser[A] = loc =>
       kore(loc) match
