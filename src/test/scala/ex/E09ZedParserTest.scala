@@ -12,7 +12,6 @@ class E09ZedParserTest extends FunSuite {
 
   test("fail unclosed array") {
     val actual = parser.run("[,1,2")
-    printResult(actual)
     assertEquals(actual.isLeft, true)
   }
   test("empty array") {
@@ -41,6 +40,10 @@ class E09ZedParserTest extends FunSuite {
         |}
         |""".stripMargin
     val actual = parser.run(jsonTxt)
+    assertEquals(actual.isRight, true)
+  }
+  test("very long array") {
+    val actual = parser.run("[" + (1 to 10000).mkString(",") + "]")
     assertEquals(actual.isRight, true)
   }
 }

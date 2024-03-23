@@ -3,6 +3,7 @@ package ch.c09
 
 import ch.c09.Result.{Failure, Success}
 
+import scala.annotation.tailrec
 import scala.util.matching.Regex
 
 opaque type ZedParser[+A] = Location => Result[A]
@@ -72,10 +73,29 @@ object ZedParser extends Parsers[ZedParser] {
 
   override def succeed[A](a: A): ZedParser[A] = _ => Success(a, 0)
 
+  /* We provide an overridden version of `many` that accumulates
+   * the list of results using a monolithic loop. This avoids
+   * stack overflow errors for most grammars.
+   */
+
   override def fail(msg: String): ZedParser[Nothing] = loc =>
     Failure(loc.toError(msg), false)
 
   extension [A](kore: ZedParser[A]) {
+    override def many: ZedParser[List[A]] =
+      loc =>
+        val buf = new collection.mutable.ListBuffer[A]
+
+        @tailrec
+        def go(p: ZedParser[A], offset: Int): Result[List[A]] =
+          p(loc.advanceBy(offset)) match
+            case Success(a, n) =>
+              buf += a
+              go(p, offset + n)
+            case Failure(e, true) => Failure(e, true)
+            case Failure(_, _) => Success(buf.toList, offset)
+
+        go(kore, 0)
 
     override def slice: ZedParser[String] =
       loc =>
