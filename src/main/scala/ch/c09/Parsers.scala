@@ -99,7 +99,6 @@ trait Parsers[Parser[+_]] {
     def defaultSucceed[T](a: T): Parser[T] =
       string("").map(_ => a)
 
-
     def char(c: Char): Parser[Char] = string(c.toString).map(_.head)
   }
 
@@ -110,11 +109,11 @@ trait Parsers[Parser[+_]] {
     def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
       equal(p, p.map(identity))(in)
 
-    def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
-      Prop.forAll(in)(s => p1.run(s) == p2.run(s))
-
     def orLaw[A](p: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
       equal(p or p2, p.map(identity) or p2.map(identity))(in)
+
+    def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
+      Prop.forAll(in)(s => p1.run(s) == p2.run(s))
 
     def charLas(p: Parser[Char])(in: Gen[Char]): Prop =
       Prop.forAll(in)(c => p.run(c.toString).isRight)

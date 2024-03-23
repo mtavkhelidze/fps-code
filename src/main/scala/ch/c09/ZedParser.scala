@@ -15,6 +15,10 @@ enum Result[+A] {
     case Failure(e, c) => Failure(f(e), c)
     case _ => this
   }
+
+  def unCommit: Result[A] = this match
+    case Failure(e, _) => Failure(e, false)
+    case _ => this
 }
 
 object ZedParser extends Parsers[ZedParser] {
@@ -25,6 +29,9 @@ object ZedParser extends Parsers[ZedParser] {
         case Some(n) => succeed(n)
         case None => fail("expected an integer")
     yield n
+
+  val nonNegativeIntOpaque: ZedParser[Int] =
+    nonNegativeInt.label("non-negative integer")
 
   override def string(s: String): ZedParser[String] = loc =>
     val i = firstNonMatchingIndex(loc.input, s, loc.offset)
@@ -70,11 +77,14 @@ object ZedParser extends Parsers[ZedParser] {
     override def label(l: String): ZedParser[A] =
       loc => kore(loc).mapError(_.label(l))
 
-    override def attempt: ZedParser[A] = ???
+    override def attempt: ZedParser[A] = loc => kore(loc).unCommit
 
     override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = ???
 
-    override def or(sore: => ZedParser[A]): ZedParser[A] = ???
+    override def or(sore: => ZedParser[A]): ZedParser[A] = loc =>
+      kore(loc) match
+        case Failure(_, false) => sore(loc)
+        case r => r
 
     override def run(input: String): Either[ParseError, A] = ???
   }
