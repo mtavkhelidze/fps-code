@@ -73,11 +73,6 @@ object ZedParser extends Parsers[ZedParser] {
 
   override def succeed[A](a: A): ZedParser[A] = _ => Success(a, 0)
 
-  /* We provide an overridden version of `many` that accumulates
-   * the list of results using a monolithic loop. This avoids
-   * stack overflow errors for most grammars.
-   */
-
   override def fail(msg: String): ZedParser[Nothing] = loc =>
     Failure(loc.toError(msg), false)
 

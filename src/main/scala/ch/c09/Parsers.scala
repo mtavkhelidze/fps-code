@@ -149,14 +149,14 @@ case class ParseError(stack: List[(Location, String)]) {
         .map((loc, msg) => s"${formatLoc(loc)} $msg")
         .mkString("\n") + context
 
-  def formatLoc(l: Location): String = s"${l.line}.${l.col}"
+  def formatLoc(l: Location): String = s"${l.line}:${l.col}"
 
   def collapseStack(s: List[(Location, String)]): List[(Location, String)] =
-    s.groupBy(_._1)
+    s.groupBy(_(0))
       .view
       .mapValues(_.map(_._2).mkString("; "))
       .toList
-      .sortBy(_._1.offset)
+      .sortBy(_(0).offset)
 }
 
 case class Location(input: String, offset: Int = 0) {
