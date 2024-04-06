@@ -6,17 +6,35 @@ import ch.c09.Result.{Failure, Success}
 import scala.annotation.tailrec
 import scala.util.matching.Regex
 
-case class ParseState(loc: Location, isSliced: Boolean)
+case class ParseState(loc: Location, isSliced: Boolean) {
+  def advanceBy(numChars: Int): ParseState =
+    copy(loc = loc.advanceBy(numChars))
+
+  def input: String = loc.input.substring(loc.offset)
+
+  def unslice: ParseState = copy(isSliced = false)
+
+  def reslice(s: ParseState): ParseState = copy(isSliced = s.isSliced)
+
+  def slice(n: Int): String = loc.input.substring(loc.offset, loc.offset + n)
+}
 
 opaque type ZedParser[+A] = ParseState => Result[A]
 
 enum Result[+A] {
   case Success(get: A, consumed: Int)
   case Failure(get: ParseError, isCommitted: Boolean) extends Result[Nothing]
+  case Slice(length: Int) extends Result[String]
 
-  def extract: Either[ParseError, A] = this match
+  def toEither(input: String): Either[ParseError, A] = this match
     case Failure(e, _) => Left(e)
     case Success(a, _) => Right(a)
+    case Slice(length) => Right(input.substring(0, length))
+
+  def slice: Result[String] = this match
+    case s @ Slice(_) => s
+    case Success(_, length) => Slice(length)
+    case f @ Failure(_, _) => f
 
   def mapError(f: ParseError => ParseError): Result[A] = this match {
     case Failure(e, c) => Failure(f(e), c)
@@ -27,6 +45,7 @@ enum Result[+A] {
     case Failure(e, c) => Failure(e, c || isCommitted)
     case _ => this
   }
+
   def unCommit: Result[A] = this match
     case Failure(e, _) => Failure(e, false)
     case _ => this
@@ -37,6 +56,8 @@ enum Result[+A] {
 }
 
 object ZedParser extends Parsers[ZedParser] {
+  import Result.*
+
   val nonNegativeInt: ZedParser[Int] =
     for
       nString <- regex("[0-9]+".r)
@@ -80,23 +101,37 @@ object ZedParser extends Parsers[ZedParser] {
 
   extension [A](kore: ZedParser[A]) {
     override def many: ZedParser[List[A]] =
-      state =>
-        val buf = new collection.mutable.ListBuffer[A]
-
-        @tailrec
-        def go(p: ZedParser[A], offset: Int): Result[List[A]] =
-          p(ParseState(state.loc.advanceBy(offset), false)) match
-            case Success(a, n) =>
-              buf += a
-              go(p, offset + n)
-            case Failure(e, true) => Failure(e, true)
-            case Failure(_, _) => Success(buf.toList, offset)
-
-        go(kore, 0)
+      s =>
+        var nConsumed: Int = 0
+        if s.isSliced then
+          @tailrec
+          def go(p: ZedParser[String], offset: Int): Result[String] =
+            p(s.advanceBy(offset)) match
+              case f @ Failure(e, true) => f
+              case Failure(e, _) => Slice(offset)
+              case Slice(n) => go(p, offset + n)
+              case Success(_, _) =>
+                sys.error("sliced parser should not return success, only slice")
+          go(kore.slice, 0).asInstanceOf[Result[List[A]]]
+        else
+          val buf = new collection.mutable.ListBuffer[A]
+          @tailrec
+          def go(p: ZedParser[A], offset: Int): Result[List[A]] =
+            p(s.advanceBy(offset)) match
+              case Success(a, n) =>
+                buf += a
+                go(p, offset + n)
+              case f @ Failure(e, true) => f
+              case Failure(e, _) => Success(buf.toList, offset)
+              case Slice(n) =>
+                buf += s.input.substring(offset, offset + n)
+                go(p, offset + n)
+          go(kore, 0)
 
     override def slice: ZedParser[String] =
       state =>
-        kore(state) match
+        kore(state.copy(isSliced = true)) match
+          case s @ Slice(_) => s
           case Success(_, n) =>
             Success(
               state.loc.input.substring(state.loc.offset, state.loc.offset + n),
@@ -113,10 +148,13 @@ object ZedParser extends Parsers[ZedParser] {
     override def attempt: ZedParser[A] = loc => kore(loc).unCommit
 
     override def flatMap[B](f: A => ZedParser[B]): ZedParser[B] = state =>
-      kore(state) match
+      kore(state.unslice) match
+        case Slice(length) =>
+          f(state.slice(length))(state.advanceBy(length).reslice(state))
+            .advanceSuccess(length)
         case Success(a, n) =>
-          f(a)(ParseState(state.loc.advanceBy(n), false))
-            .addCommit(n == 0)
+          f(a)(state.advanceBy(n).reslice(state))
+            .addCommit(n != 0)
             .advanceSuccess(n)
         case f @ Failure(_, _) => f
 
@@ -127,6 +165,6 @@ object ZedParser extends Parsers[ZedParser] {
 
     override def run(input: String): Either[ParseError, A] = kore(
       ParseState(Location(input), false),
-    ).extract
+    ).toEither(input)
   }
 }
