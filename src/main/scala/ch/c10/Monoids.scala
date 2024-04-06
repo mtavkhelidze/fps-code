@@ -29,3 +29,11 @@ val booleanOr: Monoid[Boolean] = new:
 val booleanAnd: Monoid[Boolean] = new:
   def op(a1: Boolean, a2: Boolean): Boolean = a1 && a2
   def zero: Boolean = true
+
+extension [A](kore: Option[A])
+  infix def map2[B, C](sore: Option[B])(f: (A, B) => C): Option[C] =
+    kore.flatMap(a => sore.map(b => f(a, b)))
+
+def optionMonoid[A](f: (A, A) => A): Monoid[Option[A]] = new:
+  def combine(o1: Option[A], o2: Option[A]): Option[A] = o1.map2(o2)(f)
+  def empty: Option[A] = None
