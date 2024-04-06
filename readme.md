@@ -16,6 +16,8 @@ using Scala 3_
 &nbsp;&nbsp;[Chapter 07: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
 &nbsp;&nbsp;[Chapter 08: Property-based testing](#chapter-8-property-based-testing)<br/>
 &nbsp;&nbsp;[Chapter 09: Parser combinators](#chapter-9-parser-combinators)</br>
+[Part 3. Common structures in functional design](#part-3-common-structures-in-functional-design)<br/>
+&nbsp;&nbsp;[Chapter 10: Monoids](#chapter-10-monoids)
 
 ### Part One: Introduction to functional programming
 
@@ -340,3 +342,8 @@ using Scala 3_
   and deciding how those operations and combinators should interact.
 * API design is an iterative process, where interactions amongst operations,
   sample usages, and implementation difficulties all contribute to the process.
+
+### Part 3. Common structures in functional design
+
+#### Chapter 10: Monoids
+
