@@ -327,3 +327,16 @@ using Scala 3_
 * The `many` combinator creates a parser that _parses zero or more_
   repetitions of the input parser and returnsa list of parsed values.
 * The `many1` combinator is like many but _parses one or more_ repetitions.
+* The `product` combinator (or `**` operator) creates a parser from two input
+  parsers, which runs the first parser and, if successful, runs the second
+  parser on the remaining input. The resulting value of each input parser is
+  returned in a tuple.
+* The `map`, `map2`, and `flatMap` operations are useful for building composite
+  parsers. In particular, `flatMap` allows the creation of context-sensitive
+  parsers.
+* The `label` and `scope` combinators allow better error messages to be
+  generated with parsing fails.
+* APIs can be designed by choosing primitive operations, building combinators,
+  and deciding how those operations and combinators should interact.
+* API design is an iterative process, where interactions amongst operations,
+  sample usages, and implementation difficulties all contribute to the process.
