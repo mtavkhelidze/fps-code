@@ -60,7 +60,7 @@ trait Parsers[Parser[+_]] {
       kore.sep1(separator) | succeed(Nil)
 
     def sep1(separator: Parser[Any]): Parser[List[A]] =
-      kore.map2((separator *> kore).many)(_ :: _)
+      kore.map2((separator *> kore).dotStar)(_ :: _)
 
     def product[B](sore: => Parser[B]): Parser[(A, B)] =
       kore.flatMap(a => sore.map(b => (a, b)))
@@ -90,13 +90,15 @@ trait Parsers[Parser[+_]] {
     def listOfN(n: Int): Parser[List[A]] =
       if n <= 0 then succeed(Nil) else kore.map2(listOfN(n - 1))(_ :: _)
 
-    def numOf(c: Char): Parser[Int] = char(c).many.map(_.size)
+    def numOf(c: Char): Parser[Int] = char(c).dotStar.map(_.size)
 
-    def many: Parser[List[A]] =
-      kore.map2(kore.many)(_ :: _) | succeed(Nil)
+    // like regex (.*) — zero or more
+    def dotStar: Parser[List[A]] =
+      kore.map2(kore.dotStar)(_ :: _) | succeed(Nil)
 
-    def oneOrMany: Parser[List[A]] =
-      kore.map2(kore.many)(_ :: _)
+    // like regex (.+) — one or more
+    def dotPlus: Parser[List[A]] =
+      kore.map2(kore.dotStar)(_ :: _)
 
     def defaultSucceed[T](a: T): Parser[T] =
       string("").map(_ => a)

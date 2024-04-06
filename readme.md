@@ -1,6 +1,8 @@
 Functional Programming in Scala
 ---
-_[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second Edition](https://www.amazon.com/Functional-Programming-Second-Michael-Pilquist/dp/1617299588) using Scala 3_
+_[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes
+for [Second Edition](https://www.amazon.com/Functional-Programming-Second-Michael-Pilquist/dp/1617299588)
+using Scala 3_
 
 <br/>[Part One: Introduction to functional programming](#part-one-introduction-to-functional-programming)<br/>
 &nbsp;&nbsp;[Chapter 01: What is Functional Programming](#chapter-1-what-is-functional-programming)<br/>
@@ -14,7 +16,6 @@ _[Code Companion](https://github.com/mtavkhelidze/fps-code) & Notes for [Second 
 &nbsp;&nbsp;[Chapter 07: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
 &nbsp;&nbsp;[Chapter 08: Property-based testing](#chapter-8-property-based-testing)<br/>
 &nbsp;&nbsp;[Chapter 09: Parser combinators](#chapter-9-parser-combinators)</br>
-
 
 ### Part One: Introduction to functional programming
 
@@ -253,7 +254,6 @@ encoding_</u> and only refactoring o opaque types if
 - State computations can be built with for-comprehensions,
   which result in imperative-looking code.
 
-
 ### Part Two: Functional design and combinator libraries
 
 #### Chapter 07: Purely functional parallelism
@@ -319,3 +319,20 @@ encoding_</u> and only refactoring o opaque types if
   create, and their implementations satisfy the same laws.
 
 #### Chapter 09: Parser combinators
+
+* A parser converts a sequence of unstructured data into a structured
+  representation.
+* A _**parser combinator**_ library allows the construction of a parser by combining
+  simple primitive parsers and generic
+  combinators.
+* In contrast, a _**parser generator**_ library constructs a parser based on the
+  specification of a grammar.
+* Algebraic design is the process in which an interface and associated laws are
+  designed first and then used to guide
+  the choice of data type representations.
+* Judicious use of infix operators, either defined with symbols as in `|` or with
+  the `infix` keyword as in `or`, can make
+  combinator libraries easier to use.
+* The `many` combinator creates a parser that _parses zero or more_
+  repetitions of the input parser and returns a list of parsed values.
+* The `many1` combinator is like many but _parses one or more_ repetitions.

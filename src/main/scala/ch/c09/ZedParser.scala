@@ -100,7 +100,7 @@ object ZedParser extends Parsers[ZedParser] {
     Failure(state.loc.toError(msg), false)
 
   extension [A](kore: ZedParser[A]) {
-    override def many: ZedParser[List[A]] =
+    override def dotStar: ZedParser[List[A]] =
       s =>
         var nConsumed: Int = 0
         if s.isSliced then
