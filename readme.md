@@ -347,3 +347,22 @@ using Scala 3_
 
 #### Chapter 10: Monoids
 
+> There is a slight terminology mismatch between programmers and mathematicians
+> when they talk about a type _being a monoid_ versus having _a monoid
+instance_.
+> As a programmer, it’s tempting to think of the instance of type `Monoid[A]` as
+> being a monoid, but that’s not accurate terminology. The monoid is actually
+> both
+> things—the type together with the instance satisfying the laws. It’s more
+> accurate to say that type `A` forms a monoid under the operations defined by
+> the
+> `Monoid[A]` instance. Less precisely, we might say type `A` is a monoid or
+> even
+> type
+> `A` is monoidal. In any case, the `Monoid[A]` instance is simply evidence of
+> this fact.
+>
+> This is much the same as saying that the page or screen you’re reading forms a
+> rectangle or is rectangular. It’s less accurate to say it is a rectangle (
+> although that still makes sense), but to say that it has a rectangle would be
+> strange.
