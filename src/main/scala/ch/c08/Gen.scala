@@ -144,6 +144,13 @@ object Gen {
     def flatMap[B](f: A => Gen[B]): Gen[B] = State.flatMap(self)(f)
 
     def map[B](f: A => B): Gen[B] = State.map(self)(f)
+    
+    def map2[B, C](that: Gen[B])(f: (A, B) => C): Gen[C] =
+      State.map2(self)(that)(f)
+    
+    @targetName("product")
+    def **[B](gb: Gen[B]): Gen[(A, B)] =
+      map2(gb)((_, _))
   }
 
   def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] =
@@ -154,6 +161,8 @@ object Gen {
     boolean.flatMap(b => if b then g1 else g2)
 
   def boolean: Gen[Boolean] = State(RNG.boolean)
+
+  def int: Gen[Int] = State(RNG.int)
 
   def listOfN[A](n: Int, gen: Gen[A]): Gen[List[A]] =
     State.sequence(List.fill(n)(gen))
