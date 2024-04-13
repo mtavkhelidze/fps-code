@@ -2,6 +2,9 @@ package ge.zgharbi.study.fps
 package ch.c10
 
 import ch.c07Parallelism.NonBlocking.Par
+import ch.c08Testing.{Gen, Prop}
+import ch.c08Testing.Gen.**
+
 
 trait Monoid[A] {
   def combine(a1: A, a2: A): A
@@ -107,4 +110,16 @@ object Monoid {
   extension [A](kore: Option[A])
     infix def map2[B, C](sore: Option[B])(f: (A, B) => C): Option[C] =
       kore.flatMap(a => sore.map(b => f(a, b)))
+
+  def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop =
+    val associativity = Prop
+      .forAll(gen ** gen ** gen):
+        case a ** b ** c =>
+          m.combine(a, m.combine(b, c)) == m.combine(m.combine(a, b), c)
+      .tag("associativity")
+    val identity = Prop
+      .forAll(gen): a =>
+        m.combine(a, m.empty) == a && m.combine(m.empty, a) == a
+      .tag("identity")
+    associativity && identity
 }

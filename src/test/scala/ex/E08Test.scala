@@ -1,9 +1,9 @@
 package ge.zgharbi.study.fps
 package ex
 
-import ch.c08.{Gen, Prop}
-import ch.c08.Prop.{verify, MaxSize, Result, TestCases}
-import ch.c08.Prop.Result.Falsified
+import ch.c08Testing.{Gen, Prop}
+import ch.c08Testing.Prop.{verify, MaxSize, Result, TestCases}
+import ch.c08Testing.Prop.Result.Falsified
 
 import munit.FunSuite
 

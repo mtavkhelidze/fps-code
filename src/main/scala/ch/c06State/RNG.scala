@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c06
+package ch.c06State
 
 object LCG {
   final val MODULUS = 0xfffffffffffffff1L

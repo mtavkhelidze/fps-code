@@ -2,7 +2,7 @@
 package ge.zgharbi.study.fps
 package ch.c09
 
-import ch.c08.{Gen, Prop}
+import ch.c08Testing.{Gen, Prop}
 
 import java.util.regex.Pattern
 import scala.annotation.targetName

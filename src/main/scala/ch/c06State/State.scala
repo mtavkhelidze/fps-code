@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c06
+package ch.c06State
 
 opaque type State[S, +A] = S => (A, S)
 

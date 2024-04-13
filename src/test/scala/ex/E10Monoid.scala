@@ -2,7 +2,7 @@ package ge.zgharbi.study.fps
 package ex
 
 import ch.c07Parallelism.NonBlocking.Par
-import ch.c08.{Gen, Prop}
+import ch.c08Testing.{Gen, Prop}
 import ch.c10.Monoid
 import ch.c10.Monoid.*
 
@@ -60,5 +60,11 @@ class E10Monoid extends FunSuite {
     val expected = Par.unit(xs.mkString)
 
     assertEquals(actual.run(es), expected.run(es))
+  }
+
+  test("E10.11 Word count monoid WC") {
+    val genWC = Gen(
+    val wcLaws = monoidLaws(wcMonoid, )
+    
   }
 }
