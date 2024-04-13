@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c07
+package ch.c07Parallelism
 
 import java.util.concurrent.{Callable, ExecutorService}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}

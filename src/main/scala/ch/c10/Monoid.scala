@@ -1,11 +1,41 @@
 package ge.zgharbi.study.fps
 package ch.c10
 
+import ch.c07Parallelism.NonBlocking.Par
+
 trait Monoid[A] {
   def combine(a1: A, a2: A): A
   def empty: A
 }
 object Monoid {
+  def foldLeft[A, B](xs: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
+    if xs.isEmpty then m.empty
+    else if xs.length == 1 then f(xs(0))
+    else
+      val (left, right) = xs.splitAt(xs.length / 2)
+      m.combine(foldLeft(left)(f), foldLeft(right)(f))
+  }
+
+  def foldMapV[A, B](bs: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
+    if bs.isEmpty then m.empty
+    else if bs.length == 1 then f(bs(0))
+    else
+      val (left, right) = bs.splitAt(bs.length / 2)
+      m.combine(foldMapV(left)(f), foldMapV(right)(f))
+  }
+
+  given parMonoid[B](using monoid: Monoid[B]): Monoid[Par[B]] = par(monoid)
+
+  def par[A](m: Monoid[A]): Monoid[Par[A]] = new Monoid[Par[A]] {
+    def combine(a1: Par[A], a2: Par[A]): Par[A] = a1.map2(a2)(m.combine)
+
+    def empty: Par[A] = Par.unit(m.empty)
+  }
+
+  def parFoldMap[A, B](as: IndexedSeq[A])(using monoid: Monoid[B])(f: A => B): Par[B] = {
+    Par.parMap(as)(f).flatMap(bs => foldMapV(bs)(b => Par.lazyUnit(b)))
+  }
+
   val stringMonoid: Monoid[String] = new:
     def combine(a1: String, a2: String): String = a1 + a2
 

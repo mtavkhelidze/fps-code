@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c07
+package ch.c07Parallelism
 
 import java.util.concurrent.{Future as JavaFuture, *}
 
@@ -86,6 +86,12 @@ object Par {
       sequence(fbs)
     }
 
+  def parMap[A, B](ps: IndexedSeq[A])(f: A => B): Par[IndexedSeq[B]] =
+    fork {
+      val fbs: IndexedSeq[Par[B]] = ps.map(asyncF(f))
+      sequence(fbs)
+    }
+
   def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] =
     fork {
       val pars: List[Par[List[A]]] =
@@ -102,6 +108,9 @@ object Par {
 
   def sequence[A](ps: List[Par[A]]): Par[List[A]] =
     sequenceBalanced(ps.toIndexedSeq).map(_.toList)
+
+  def sequence[A](as: IndexedSeq[Par[A]]): Par[IndexedSeq[A]] =
+    sequenceBalanced(as)
 
   def asyncF[A, B](f: A => B): A => Par[B] =
     (a: A) => lazyUnit(f(a))
