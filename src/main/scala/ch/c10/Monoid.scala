@@ -7,7 +7,27 @@ trait Monoid[A] {
   def combine(a1: A, a2: A): A
   def empty: A
 }
+
 object Monoid {
+  val wcMonoid: Monoid[WC] = new Monoid[WC] {
+
+    import WC.*
+
+    override def combine(a1: WC, a2: WC): WC = (a1, a2) match
+      case (Stub(a), Stub(b)) => WC.Stub(a + b)
+      case (Stub(a), WC.Part(l, w, r)) => Part(a + l, w, r)
+      case (Part(l, w, r), Stub(a)) => WC.Part(l, w, r + a)
+      case (Part(l, w, r), Part(l2, w2, r2)) =>
+        Part(l, w + (if (r + l2).isEmpty then 0 else 1) + w2, r2)
+
+    override def empty: WC = Stub("")
+  }
+
+  enum WC:
+    case Stub(chars: String)
+    case Part(lStub: String, words: Int, rStub: String)
+
+
   def foldLeft[A, B](xs: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
     if xs.isEmpty then m.empty
     else if xs.length == 1 then f(xs(0))
