@@ -12,7 +12,7 @@ class E10Monoid extends FunSuite {
     def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = {
       val identity = Prop
         .forAll(gen) { a =>
-          m.combine(a, m.zero) == a && m.combine(m.zero, a) == a
+          m.combine(a, m.empty) == a && m.combine(m.empty, a) == a
         }
         .tag("identity")
 
@@ -26,5 +26,14 @@ class E10Monoid extends FunSuite {
     }
 
     assertEquals(monoidLaws(Monoid.intAddition, Gen.int).check(), Prop.Result.Passed)
+  }
+
+  test("E10.07 foldLeft") {
+    import E10.foldLeft
+    import Monoid.*
+    given intMonoid: Monoid[Int] = intAddition
+
+    val xs = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    assertEquals(foldLeft(xs)(identity), 55)
   }
 }
