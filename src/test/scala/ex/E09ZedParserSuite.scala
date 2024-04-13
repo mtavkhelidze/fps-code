@@ -6,7 +6,7 @@ import ch.c09.JSONGrammar.{JArray, JNumber}
 
 import munit.FunSuite
 
-class E09ZedParserTest extends FunSuite {
+class E09ZedParserSuite extends FunSuite {
   def printResult[E](r: Either[E, JSONGrammar]): Unit = r.fold(println, println)
   def parser: ZedParser[JSONGrammar] = JSONGrammar.jsonParser(ZedParser)
 

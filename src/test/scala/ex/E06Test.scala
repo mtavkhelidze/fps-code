@@ -9,7 +9,7 @@ class E06Test extends FunSuite {
   import ch.c06State.RNG.*
 
   val seed = 0xdeadbeefL
-  val rng: SimpleRNG = SimpleRNG(seed)
+  val rng: Simple = Simple(seed)
 
   test("06.01 RNG#nonNegativeInt") {
     val actual = rng.nonNegativeInt._1

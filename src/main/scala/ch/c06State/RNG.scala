@@ -59,12 +59,12 @@ object RNG {
 
     infix def both[B](other: Rand[B]): Rand[(A, B)] = self.map2(other)((_, _))
 
-  case class SimpleRNG(seed: Long) extends RNG:
+  case class Simple(seed: Long) extends RNG:
     import LCG.*
 
     override def nextInt: (Int, RNG) =
       val nSeed = compute(seed)
-      val next = SimpleRNG(nSeed)
+      val next = Simple(nSeed)
       val n = (nSeed >>> 16).toInt
       (n, next)
 

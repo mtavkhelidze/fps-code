@@ -4,13 +4,12 @@ package ex
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.{Gen, Prop}
 import ch.c10.Monoid
-import ch.c10.Monoid.*
 
 import munit.FunSuite
 
 import java.util.concurrent.Executors
 
-class E10Monoid extends FunSuite {
+class E10MonoidSuite extends FunSuite {
   import Monoid.*
   test("E10.04 Monoid laws") {
     def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = {
@@ -63,8 +62,18 @@ class E10Monoid extends FunSuite {
   }
 
   test("E10.11 Word count monoid WC") {
-    val genWC = Gen(
-    val wcLaws = monoidLaws(wcMonoid, )
-    
+//    val genWC =
+//    val wcLaws = monoidLaws(wcMonoid, )
+//
   }
+
+  private def trueCounter(b: Boolean): Int = if b then 1 else 0
+
+  private def trueCounter(list: Seq[Boolean]): Int = list.count(identity)
+
+  private def assertMonoid[A](m: Monoid[A], a: A, b: A, c: A): Unit =
+    assertEquals(m.combine(a, m.combine(b, c)), m.combine(m.combine(a, b), c), "associativity")
+    assertEquals(m.combine(a, m.empty), a, "identity")
+    assertEquals(m.combine(m.empty, a), a, "identity")
+
 }

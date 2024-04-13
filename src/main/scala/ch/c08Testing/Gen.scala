@@ -2,7 +2,7 @@ package ge.zgharbi.study.fps
 package ch.c08Testing
 
 import ch.c06State.{RNG, State}
-import ch.c06State.RNG.SimpleRNG
+import ch.c06State.RNG.Simple
 import ch.c08Testing.Prop.*
 import ch.c08Testing.Prop.Result.{Falsified, Passed, Proved}
 
@@ -57,16 +57,16 @@ object Prop {
 
   extension (self: Prop) {
     def check(
-        maxSize: MaxSize = 100,
-        testCases: TestCases = 100,
-        rng: RNG = SimpleRNG(System.currentTimeMillis),
+               maxSize: MaxSize = 100,
+               testCases: TestCases = 100,
+               rng: RNG = Simple(System.currentTimeMillis),
     ): Result =
       self(maxSize, testCases, rng)
 
     def run(
-        maxSize: MaxSize = 100,
-        testCases: TestCases = 100,
-        rng: RNG = SimpleRNG(System.currentTimeMillis),
+             maxSize: MaxSize = 100,
+             testCases: TestCases = 100,
+             rng: RNG = Simple(System.currentTimeMillis),
     ): Unit =
       self.check(maxSize, testCases, rng) match
         case Passed => println(s"+ OK, Passed $testCases tests.")
