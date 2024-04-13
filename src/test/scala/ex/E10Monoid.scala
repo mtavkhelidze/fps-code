@@ -28,12 +28,23 @@ class E10Monoid extends FunSuite {
     assertEquals(monoidLaws(Monoid.intAddition, Gen.int).check(), Prop.Result.Passed)
   }
 
-  test("E10.07 foldLeft") {
+  test("E10.07 foldLeft intAddition") {
     import E10.foldLeft
     import Monoid.*
     given intMonoid: Monoid[Int] = intAddition
 
     val xs = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     assertEquals(foldLeft(xs)(identity), 55)
+  }
+
+  test("E10.07 foldLeft stringMonoid") {
+    import E10.foldLeft
+    import Monoid.*
+
+    given monoid: Monoid[String] = stringMonoid
+    def toString = (i: Int) => i.toString
+    val xs = IndexedSeq(1, 2, 3, 4, 5)
+
+    assertEquals(foldLeft(xs)(toString), "12345")
   }
 }
