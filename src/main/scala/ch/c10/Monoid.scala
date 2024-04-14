@@ -39,6 +39,22 @@ object WC {
     } yield WC.Part(lStub, words, rStub)
     Gen.union(stubGen, partGen)
   }
+
+  def count(s: String): Int = {
+    def unStub(s: String): Int = if s.isEmpty then 0 else 1
+
+    given wcMonoid: Monoid[WC] = monoid
+
+    Monoid.foldMapV(s.toIndexedSeq)(wc) match {
+      case WC.Part(lStub, w, rStub) => unStub(lStub) + w + unStub(rStub)
+      case WC.Stub(chars) => unStub(chars)
+    }
+  }
+
+  private def wc(c: Char): WC = {
+    if c.isWhitespace then WC.Part("", 0, "")
+    else WC.Stub(c.toString)
+  }
 }
 
 object Monoid {

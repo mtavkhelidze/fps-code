@@ -53,6 +53,12 @@ class E10MonoidSuite extends FunSuite {
     assertEquals(checkResult, Prop.Result.Passed)
   }
 
+  test("E10.12 count words") {
+    val input = "This book is a treatise on the theory of ethics"
+    val result = WC.count(input)
+    assertEquals(result, 10)
+  }
+
   private def trueCounter(b: Boolean): Int = if b then 1 else 0
 
   private def trueCounter(list: Seq[Boolean]): Int = list.count(identity)
