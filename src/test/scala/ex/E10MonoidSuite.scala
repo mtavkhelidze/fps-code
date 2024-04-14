@@ -4,31 +4,23 @@ package ex
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.{Gen, Prop}
 import ch.c10.Monoid
+import common.Common.*
 
 import munit.FunSuite
 
-import java.util.concurrent.Executors
-
 class E10MonoidSuite extends FunSuite {
   import Monoid.*
+
+  override def afterAll(): Unit = {
+    super.afterAll()
+    service.shutdownNow()
+  }
+
   test("E10.04 Monoid laws") {
-    def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = {
-      val identity = Prop
-        .forAll(gen) { a =>
-          m.combine(a, m.empty) == a && m.combine(m.empty, a) == a
-        }
-        .tag("identity")
-
-      val associativity = Prop
-        .forAll(gen ** gen) { (x, y) =>
-          m.combine(x, y) == m.combine(y, x)
-        }
-        .tag("associativity")
-
-      identity && associativity
-    }
-
-    assertEquals(monoidLaws(Monoid.intAddition, Gen.int).check(), Prop.Result.Passed)
+    assertEquals(
+      monoidLaws(Monoid.intAddition, Gen.int).check(),
+      Prop.Result.Passed
+    )
   }
   test("E10.07 foldLeft using intAddition") {
     import Monoid.*
@@ -52,18 +44,17 @@ class E10MonoidSuite extends FunSuite {
 
     def toString = (i: Int) => i.toString
 
-    val es = Executors.newScheduledThreadPool(4)
     val xs = 1 to 5
 
     val actual: Par[String] = parFoldMap(xs)(toString)
-    val expected = Par.unit(xs.mkString)
+    val expected = xs.mkString
 
-    assertEquals(actual.run(es), expected.run(es))
+    assertEquals(actual.run(service), expected)
   }
-
   test("E10.11 Word count monoid WC") {
+    assertEquals(true, true)
 //    val genWC =
-//    val wcLaws = monoidLaws(wcMonoid, )
+    //    val wcLaws = monoidLaws(wcMonoid,)
 //
   }
 

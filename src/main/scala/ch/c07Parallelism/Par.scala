@@ -28,7 +28,8 @@ object Par {
 
   extension [A](pa: Par[A]) {
 
-    def run(s: ExecutorService): JavaFuture[A] = pa(s)
+    def run(s: ExecutorService): JavaFuture[A] =
+      pa(s)
 
     def flatMap[B](f: A => Par[B]): Par[B] =
       es =>

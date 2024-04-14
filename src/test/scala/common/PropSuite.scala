@@ -7,13 +7,12 @@ import ch.c08Testing.exhaustive.Prop.Result.*
 
 import munit.{FunSuite, Location, TestOptions}
 import munit.internal.FutureCompat.*
-
 import scala.annotation.nowarn
 import scala.util.{Failure, Success, Try}
-class PropSuite extends FunSuite {
+trait PropSuite extends FunSuite {
   private val scalaCheckPropTransform: TestTransform =
     new TestTransform(
-      "FPInScala Prop",
+      "PropTest ",
       t =>
         t.withBodyMap(
           _.transformCompat {
