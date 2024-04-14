@@ -1,10 +1,10 @@
 package ge.zgharbi.study.fps
 
 import ch.c07Parallelism.NonBlocking.Par
-import ch.c10.Monoid
-import ch.c10.Monoid.{parFoldMap, stringMonoid}
+import ch.c10MonoidFoldable.Monoid
+import ch.c10MonoidFoldable.Monoid.{parFoldMap, stringMonoid}
 
-import java.util.concurrent.{Executors, ExecutorService, Future as JavaFuture, *}
+import java.util.concurrent.{Future as JavaFuture, *}
 import java.util.concurrent.TimeUnit.{MICROSECONDS, MILLISECONDS}
 
 object Main extends App {

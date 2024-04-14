@@ -3,7 +3,7 @@ package ex
 
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.{Gen, Prop}
-import ch.c10.{Monoid, WC}
+import ch.c10MonoidFoldable.{Monoid, WC}
 import common.Common.*
 
 import munit.FunSuite

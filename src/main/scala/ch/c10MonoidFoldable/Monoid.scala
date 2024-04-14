@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c10
+package ch.c10MonoidFoldable
 
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.{Gen, Prop}
