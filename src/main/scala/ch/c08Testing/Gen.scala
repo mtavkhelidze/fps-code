@@ -159,6 +159,9 @@ object Gen {
 
   }
 
+  def stringN(n: Int): Gen[String] =
+    listOfN(n, choose(0, 127)).map(_.map(_.toChar).mkString)
+
   def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] =
     val th = g1(1).abs / (g1(1).abs + g2(1).abs)
     State(RNG.double).flatMap(d => if d < th then g1(0) else g2(0))

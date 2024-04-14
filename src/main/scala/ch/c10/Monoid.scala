@@ -11,10 +11,13 @@ trait Monoid[A] {
   def empty: A
 }
 
-object Monoid {
-  val wcMonoid: Monoid[WC] = new Monoid[WC] {
+enum WC {
+  case Stub(chars: String)
+  case Part(lStub: String, words: Int, rStub: String)
+}
 
-    import WC.*
+object WC {
+  val monoid: Monoid[WC] = new Monoid[WC] {
 
     override def combine(a1: WC, a2: WC): WC = (a1, a2) match
       case (Stub(a), Stub(b)) => WC.Stub(a + b)
@@ -26,10 +29,19 @@ object Monoid {
     override def empty: WC = Stub("")
   }
 
-  enum WC:
-    case Stub(chars: String)
-    case Part(lStub: String, words: Int, rStub: String)
+  def wcGen: Gen[WC] = {
+    val smallString = Gen.choose(0, 20).flatMap(Gen.stringN)
+    val stubGen: Gen[WC] = smallString.map(WC.Stub.apply)
+    val partGen: Gen[WC] = for {
+      lStub <- smallString
+      words <- Gen.choose(0, 10)
+      rStub <- smallString
+    } yield WC.Part(lStub, words, rStub)
+    Gen.union(stubGen, partGen)
+  }
+}
 
+object Monoid {
 
   def foldLeft[A, B](xs: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
     if xs.isEmpty then m.empty

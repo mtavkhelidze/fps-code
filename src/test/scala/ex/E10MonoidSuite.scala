@@ -3,7 +3,7 @@ package ex
 
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.{Gen, Prop}
-import ch.c10.Monoid
+import ch.c10.{Monoid, WC}
 import common.Common.*
 
 import munit.FunSuite
@@ -23,15 +23,12 @@ class E10MonoidSuite extends FunSuite {
     )
   }
   test("E10.07 foldLeft using intAddition") {
-    import Monoid.*
     given intMonoid: Monoid[Int] = intAddition
 
     val xs = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     assertEquals(foldLeft(xs)(identity), 55)
   }
   test("E10.07 foldLeft using stringMonoid") {
-    import Monoid.*
-
     given monoid: Monoid[String] = stringMonoid
     def toString = (i: Int) => i.toString
     val xs = IndexedSeq(1, 2, 3, 4, 5)
@@ -51,11 +48,9 @@ class E10MonoidSuite extends FunSuite {
 
     assertEquals(actual.run(service), expected)
   }
-  test("E10.11 Word count monoid WC") {
-    assertEquals(true, true)
-//    val genWC =
-    //    val wcLaws = monoidLaws(wcMonoid,)
-//
+  test("E10.11 WordCount monoid laws") {
+    val checkResult = monoidLaws(WC.monoid, WC.wcGen).check()
+    assertEquals(checkResult, Prop.Result.Passed)
   }
 
   private def trueCounter(b: Boolean): Int = if b then 1 else 0
