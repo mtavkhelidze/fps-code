@@ -14,6 +14,7 @@ trait Foldable[F[_]] {
       as.foldRight(m.empty)((a, b) => m.combine(f(a), b))
     def combineAll(using m: Monoid[A]): A =
       as.foldLeft(m.empty)(m.combine)
+    def toList: List[A] = as.foldRight(List.empty)(_ :: _)
   }
 }
 
@@ -24,6 +25,8 @@ object Foldable {
         xs.foldRight(acc)(f)
       override def foldLeft[B](acc: B)(f: (B, A) => B): B =
         xs.foldLeft(acc)(f)
+
+      override def toList: List[A] = xs
   }
 
   given Foldable[IndexedSeq] with {
@@ -32,16 +35,20 @@ object Foldable {
         as.foldRight(acc)(f)
       override def foldLeft[B](acc: B)(f: (B, A) => B): B =
         as.foldLeft(acc)(f)
+
+      override def toList: List[A] = as.toList
   }
 
   given Foldable[LazyList] with {
-    extension [A](as: LazyList[A])
+    extension [A](ls: LazyList[A])
       @tailrec
       override def foldRight[B](acc: B)(f: (A, B) => B): B =
-        as.foldRight(acc)(f)
+        ls.foldRight(acc)(f)
       @tailrec
       override def foldLeft[B](acc: B)(f: (B, A) => B): B =
-        as.foldLeft(acc)(f)
+        ls.foldLeft(acc)(f)
+
+      override def toList: List[A] = ls.toList
   }
 
   given Foldable[Tree] with {
@@ -80,8 +87,8 @@ object Foldable {
         case None => acc
       }
       override def foldMap[B](f: A => B)(using mb: Monoid[B]): B = op match
-        case Some(value) => mb.empty
-        case None => f(a)
+        case Some(value) => f(value)
+        case None => mb.empty
     }
   }
 }
