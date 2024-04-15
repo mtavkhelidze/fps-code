@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c05
+package ch.c05LazyList
 
 import scala.annotation.tailrec
 

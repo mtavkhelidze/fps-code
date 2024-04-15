@@ -5,8 +5,8 @@ import munit.FunSuite
 
 class E05Test extends FunSuite {
 
-  import ch.c05.LazyList
-  import ch.c05.LazyList.*
+  import ch.c05LazyList.LazyList
+  import ch.c05LazyList.LazyList.*
 
   test("05.01 LazyList#toList") {
     val actual = LazyList(1, 2, 3, 4).toList

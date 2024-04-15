@@ -1,5 +1,5 @@
 package ge.zgharbi.study.fps
-package ch.c03
+package ch.c03Tree
 
 enum Tree[+A] {
   case Leaf(value: A)

@@ -1,7 +1,7 @@
 package ge.zgharbi.study.fps
 package ex
 
-import ch.c03.Tree
+import ch.c03Tree.Tree
 
 import munit.FunSuite
 
