@@ -56,7 +56,7 @@ object Foldable {
 
     import Tree.{Branch, Leaf}
 
-    extension [A](as: Tree[A])
+    extension [A](as: Tree[A]) {
       override def foldRight[B](acc: B)(f: (A, B) => B): B = as match
         case Leaf(a) => f(a, acc)
         case Branch(l, r) => l.foldRight(r.foldRight(acc)(f))(f)
@@ -66,5 +66,22 @@ object Foldable {
       override def foldMap[B](f: A => B)(using mb: Monoid[B]): B = as match
         case Leaf(a) => f(a)
         case Branch(l, r) => mb.combine(l.foldMap(f), r.foldMap(f))
+    }
+  }
+
+  given Foldable[Option] with {
+    extension [A](op: Option[A]) {
+      override def foldRight[B](acc: B)(f: (A, B) => B): B = op match {
+        case Some(value) => f(value, acc)
+        case None => acc
+      }
+      override def foldLeft[B](acc: B)(f: (B, A) => B): B = op match {
+        case Some(value) => f(acc, value)
+        case None => acc
+      }
+      override def foldMap[B](f: A => B)(using mb: Monoid[B]): B = op match
+        case Some(value) => mb.empty
+        case None => f(a)
+    }
   }
 }
