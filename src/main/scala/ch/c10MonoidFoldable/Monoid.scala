@@ -77,7 +77,7 @@ object Monoid {
 
   given parMonoid[B](using monoid: Monoid[B]): Monoid[Par[B]] = par(monoid)
 
-  def par[A](m: Monoid[A]): Monoid[Par[A]] = new Monoid[Par[A]] {
+  private def par[A](m: Monoid[A]): Monoid[Par[A]] = new Monoid[Par[A]] {
     def combine(a1: Par[A], a2: Par[A]): Par[A] = a1.map2(a2)(m.combine)
 
     def empty: Par[A] = Par.unit(m.empty)
@@ -151,3 +151,4 @@ object Monoid {
       .tag("identity")
     associativity && identity
 }
+
