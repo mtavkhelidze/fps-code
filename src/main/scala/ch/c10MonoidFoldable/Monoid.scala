@@ -86,10 +86,11 @@ object Monoid {
 
     def empty: A => A = identity
 
-  given productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)] with {
-    override def combine(a1: (A, B), a2: (A, B)): (A, B) = ???
+  def productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)] = new Monoid[(A, B)] {
+    override def combine(a1: (A, B), a2: (A, B)): (A, B) =
+      (ma.combine(a1._1, a2._1), mb.combine(a1._2, a2._2))
 
-    override def empty: (A, B) = ???
+    override def empty: (A, B) = (ma.empty, mb.empty)
   }
 
   extension [A](kore: Option[A])

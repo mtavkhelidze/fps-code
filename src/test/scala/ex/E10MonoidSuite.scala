@@ -19,8 +19,14 @@ class E10MonoidSuite extends PropSuite {
     service.shutdownNow()
   }
 
-  test("E10.16 Product Monoid laws")(genString ** genString) {
-    case s1 ** s2 => ()
+
+  test("E10.16 Product Monoid laws")(genString ** genString ** genString ** genInt ** genInt ** genInt) {
+    case s1 ** s2 ** s3 ** i1 ** i2 ** i3 =>
+      given Monoid[String] = stringMonoid
+
+      given Monoid[Int] = intAddition
+
+      assertMonoid(productMonoid[String, Int], (s1, i1), (s2, i2), (s3, i3))
   }
 
   test("E10.04 Monoid laws")(genInt ** genInt ** genInt) { case i1 ** i2 ** i3 =>
