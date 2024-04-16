@@ -8,6 +8,8 @@ import java.util.concurrent.{Executors, ExecutorService}
 
 object Common {
 
+  lazy val genUnit: Gen[Unit] = Gen.unit(())
+  lazy val genInt: Gen[Int] = Gen.int
   lazy val genChar: Gen[Char] = Gen.choose(97, 123).map(_.toChar)
   lazy val genRNG: Gen[RNG] = Gen.int.map(i => RNG.Simple(i.toLong))
   lazy val genShortNumber: Gen[Int] = Gen.choose(0, 20)

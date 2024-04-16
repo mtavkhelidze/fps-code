@@ -7,8 +7,9 @@ import ch.c08Testing.exhaustive.Prop.Result.*
 
 import munit.{FunSuite, Location, TestOptions}
 import munit.internal.FutureCompat.*
+
 import scala.annotation.nowarn
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 trait PropSuite extends FunSuite {
   private val scalaCheckPropTransform: TestTransform =
     new TestTransform(
@@ -38,11 +39,7 @@ trait PropSuite extends FunSuite {
 
   private def resultToTry(result: Result, test: Test): Try[Unit] =
     result match
-      case Passed(status, n) =>
-        println(
-          s"${test.name}: + OK, property ${status.toString.toLowerCase}, ran $n tests.",
-        )
-        Success(())
+      case Passed(status, n) => Success(())
       case Falsified(msg) =>
         Try(fail(msg.string)(test.location))
 }

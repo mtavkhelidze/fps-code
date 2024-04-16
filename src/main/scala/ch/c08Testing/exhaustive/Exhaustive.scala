@@ -233,6 +233,7 @@ case class Gen[+A](sample: State[RNG, A], exhaustive: LazyList[Option[A]]):
 
   def unsized: SGen[A] = SGen.Unsized(this)
 
+  @targetName("map2stars")
   def **[B](g: Gen[B]): Gen[(A, B)] =
     map2(g)((_, _))
 
