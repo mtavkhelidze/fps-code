@@ -19,12 +19,24 @@ class E10MonoidSuite extends PropSuite {
     service.shutdownNow()
   }
 
+  import Monoid.given
+
+  given Monoid[String] = stringMonoid
+
+  given Monoid[Int] = intAddition
+
+
+  test("Monoid.mapMergeMonoid")(genUnit) { _ =>
+    val M = mapMergeMonoid[String, Map[String, Int]]
+    val m1 = Map("o1" -> Map("i1" -> 1, "i2" -> 2))
+    val m2 = Map("o1" -> Map("i2" -> 3))
+    val m3 = M.combine(m1, m2)
+    assertEquals(m3, Map("o1" -> Map("i1" -> 1, "i2" -> 5)))
+  }
 
   test("E10.16 Product Monoid laws")(genString ** genString ** genString ** genInt ** genInt ** genInt) {
     case s1 ** s2 ** s3 ** i1 ** i2 ** i3 =>
-      given Monoid[String] = stringMonoid
-
-      given Monoid[Int] = intAddition
+      import Monoid.productMonoid
 
       assertMonoid(productMonoid[String, Int], (s1, i1), (s2, i2), (s3, i3))
   }

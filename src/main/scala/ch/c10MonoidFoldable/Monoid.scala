@@ -86,7 +86,15 @@ object Monoid {
 
     def empty: A => A = identity
 
-  def productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)] = new Monoid[(A, B)] {
+  given mapMergeMonoid[K, V](using mv: Monoid[V]): Monoid[Map[K, V]] with {
+    def combine(a: Map[K, V], b: Map[K, V]): Map[K, V] =
+      (a.keySet ++ b.keySet).foldLeft(empty)((acc, k) =>
+        acc.updated(k, mv.combine(a.getOrElse(k, mv.empty), b.getOrElse(k, mv.empty))))
+
+    def empty: Map[K, V] = Map.empty
+  }
+
+  given productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)] with {
     override def combine(a1: (A, B), a2: (A, B)): (A, B) =
       (ma.combine(a1._1, a2._1), mb.combine(a1._2, a2._2))
 
