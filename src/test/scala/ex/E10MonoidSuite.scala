@@ -25,7 +25,17 @@ class E10MonoidSuite extends PropSuite {
 
   given Monoid[Int] = intAddition
 
+  test("Monoid.functionMonoid")(genInt) { a =>
+    val m: Monoid[Int => String] = functionMonoid[Int, String]
+    val f: Int => String = i => if i % 2 == 0 then "even" else "odd"
+    val g: Int => String = i => if i < 0 then "negative" else "positive"
+    val h: Int => String = i => i.toString
 
+    assertEquals(m.combine(f, m.empty)(a), f(a), "identity")
+    assertEquals(m.combine(m.empty, f)(a), f(a), "identity")
+    assertEquals(m.combine(f, m.combine(g, h))(a), m.combine(m.combine(f, g), h)(a), "associativity")
+  }
+  
   test("Monoid.mapMergeMonoid")(genUnit) { _ =>
     val M = mapMergeMonoid[String, Map[String, Int]]
     val m1 = Map("o1" -> Map("i1" -> 1, "i2" -> 2))
