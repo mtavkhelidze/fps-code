@@ -2,9 +2,6 @@ package ge.zgharbi.study.fps
 package ch.c10MonoidFoldable
 
 import ch.c03Tree.Tree
-import ch.c05LazyList.LazyList
-
-import scala.annotation.tailrec
 
 trait Foldable[F[_]] {
   extension [A](as: F[A]) {
@@ -35,20 +32,18 @@ object Foldable {
         as.foldRight(acc)(f)
       override def foldLeft[B](acc: B)(f: (B, A) => B): B =
         as.foldLeft(acc)(f)
+      override def foldMap[B](f: A => B)(using mb: Monoid[B]): B =
+        Monoid.foldMapV(as)(f)
 
       override def toList: List[A] = as.toList
   }
 
   given Foldable[LazyList] with {
     extension [A](ls: LazyList[A])
-      @tailrec
       override def foldRight[B](acc: B)(f: (A, B) => B): B =
         ls.foldRight(acc)(f)
-      @tailrec
       override def foldLeft[B](acc: B)(f: (B, A) => B): B =
         ls.foldLeft(acc)(f)
-
-      override def toList: List[A] = ls.toList
   }
 
   given Foldable[Tree] with {

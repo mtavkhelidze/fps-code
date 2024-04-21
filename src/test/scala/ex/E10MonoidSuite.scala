@@ -4,13 +4,12 @@ package ex
 import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.exhaustive.Gen.**
 import ch.c10MonoidFoldable.{Monoid, WC}
+import ch.c10MonoidFoldable.Monoid.{*, given}
 import common.Common.*
 import common.PropSuite
 
 import java.util.concurrent.{Executors, ExecutorService}
-
 class E10MonoidSuite extends PropSuite {
-  import Monoid.*
 
   private lazy val service: ExecutorService = Executors.newFixedThreadPool(4)
 
@@ -19,11 +18,13 @@ class E10MonoidSuite extends PropSuite {
     service.shutdownNow()
   }
 
-  import Monoid.given
-
-  given Monoid[String] = stringMonoid
-
-  given Monoid[Int] = intAddition
+  test("Monoid.bag")(genUnit) { _ =>
+    assertEquals(bag(IndexedSeq.empty[String]), Map.empty[String, Int])
+    assertEquals(bag(IndexedSeq("rose")), Map("rose" -> 1))
+    assertEquals(bag(IndexedSeq("rose", "rose", "rose")), Map("rose" -> 3))
+    assertEquals(bag(IndexedSeq("a", "rose", "is")), Map("a" -> 1, "rose" -> 1, "is" -> 1))
+    assertEquals(bag(IndexedSeq("a", "rose", "is", "a", "rose")), Map("a" -> 2, "rose" -> 2, "is" -> 1))
+  }
 
   test("Monoid.functionMonoid")(genInt) { a =>
     val m: Monoid[Int => String] = functionMonoid[Int, String]
@@ -35,7 +36,7 @@ class E10MonoidSuite extends PropSuite {
     assertEquals(m.combine(m.empty, f)(a), f(a), "identity")
     assertEquals(m.combine(f, m.combine(g, h))(a), m.combine(m.combine(f, g), h)(a), "associativity")
   }
-  
+
   test("Monoid.mapMergeMonoid")(genUnit) { _ =>
     val M = mapMergeMonoid[String, Map[String, Int]]
     val m1 = Map("o1" -> Map("i1" -> 1, "i2" -> 2))
@@ -55,21 +56,16 @@ class E10MonoidSuite extends PropSuite {
     assertMonoid(intAddition, i1, i2, i3)
   }
   test("E10.07 foldLeft using intAddition")(genUnit) { _ =>
-    given intMonoid: Monoid[Int] = intAddition
-
     val xs = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     assertEquals(foldLeft(xs)(identity), 55)
   }
   test("E10.07 foldLeft using stringMonoid")(genUnit) { _ =>
-    given monoid: Monoid[String] = stringMonoid
     def toString = (i: Int) => i.toString
     val xs = IndexedSeq(1, 2, 3, 4, 5)
 
     assertEquals(foldLeft(xs)(toString), "12345")
   }
   test("E10.08 parFoldMap using stringMonoid")(genUnit) { _ =>
-
-    given monoid: Monoid[String] = stringMonoid
 
     def toString = (i: Int) => i.toString
 

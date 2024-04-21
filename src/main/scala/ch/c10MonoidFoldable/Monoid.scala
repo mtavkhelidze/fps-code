@@ -12,8 +12,7 @@ trait Monoid[A] {
 }
 
 object Monoid {
-
-  val stringMonoid: Monoid[String] = new Monoid[String]:
+  given stringMonoid: Monoid[String] = new Monoid[String]:
     def combine(a1: String, a2: String): String = a1 + a2
 
     def empty: String = ""
@@ -26,12 +25,14 @@ object Monoid {
       m.combine(foldLeft(left)(f), foldLeft(right)(f))
   }
 
-  def foldMapV[A, B](bs: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
-    if bs.isEmpty then m.empty
-    else if bs.length == 1 then f(bs(0))
+  def foldMapV[A, B](as: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
+    if as.isEmpty then
+      m.empty
+    else if as.length == 1 then
+      f(as(0))
     else
-      val (left, right) = bs.splitAt(bs.length / 2)
-      m.combine(foldMapV(left)(f), foldMapV(right)(f))
+      val (l, r) = as.splitAt(as.length / 2)
+      m.combine(foldMapV(l)(f), foldMapV(r)(f))
   }
 
   given parMonoid[B](using monoid: Monoid[B]): Monoid[Par[B]] = par(monoid)
@@ -42,7 +43,7 @@ object Monoid {
     def empty: Par[A] = Par.unit(m.empty)
   }
 
-  val intAddition: Monoid[Int] = new Monoid[Int]:
+  given intAddition: Monoid[Int] = new Monoid[Int]:
     def combine(a1: Int, a2: Int): Int = a1 + a2
 
     def empty: Int = 0
@@ -122,6 +123,11 @@ object Monoid {
         m.combine(a, m.empty) == a && m.combine(m.empty, a) == a
       .tag("identity")
     associativity && identity
+
+  def bag[A](as: IndexedSeq[A]): Map[A, Int] = {
+    import Foldable.given
+    as.foldMap(a => Map(a -> 1))
+  }
 }
 
 
