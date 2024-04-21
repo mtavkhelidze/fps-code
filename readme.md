@@ -366,3 +366,38 @@ instance_.
 > rectangle or is rectangular. It’s less accurate to say it is a rectangle (
 > although that still makes sense), but to say that it has a rectangle would be
 > strange.
+
+* A monoid is a purely algebraic structure consisting of an associative binary
+  operation and an identity element for that operation.
+* Associativity lets us move the parentheses around in an expression without
+  changing the result.
+* Example monoids include string concatenation with the empty string as the
+  identity, integer addition with 0 as the identity, integer multiplication with
+  1 as the identity, Boolean and with true as the identity, Boolean or with
+  false as the identity, and list concatenation with `Nil` as the identity.
+* Monoids can be modeled as `traits` with `combine` and `empty` operations.
+* Monoids allow us to write useful, generic functions for a wide variety of data
+  types.
+* The `combineAll` function folds the elements of a list into a single value
+  using a monoid.
+* The `foldMap` function maps each element of a list to a new type and then
+  combines the mapped values with a monoid instance.
+* `foldMap` can be implemented with `foldLeft` or `foldRight`, and
+  both `foldLeft` and
+  `foldRight` can be implemented with `foldMap`.
+* The various monoids encountered in this chapter had nothing in common besides
+  their monoidal structure.
+* Typeclasses allow us to describe an algebraic structure and provide canonical
+  instances of that structure for various types.
+* Context parameters are defined by starting a parameter list with the `using`
+  keyword. At the call site, Scala will search for a given instance of each
+  context parameter. Given instances are defined with the `given` keyword.
+* Context parameters can be passed explicitly with the `using` keyword at the
+  call site.
+* Scala’s `given` instances and context parameters allow us to offload type-driven
+  composition to the compiler.
+* The `summon` method returns the given instance in scope for the supplied type
+  parameter. If no such instance is available, compilation fails.
+* The `Foldable` typeclass describes type constructors that support computing an
+  output value by folding over their elements—that is, support `foldLeft`,
+  `foldRight`, `foldMap`, and `combineAll`.
