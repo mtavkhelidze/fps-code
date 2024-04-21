@@ -9,3 +9,5 @@ target
 .metals/
 metals
 project/metals.sbt
+.vscode/
+.history/

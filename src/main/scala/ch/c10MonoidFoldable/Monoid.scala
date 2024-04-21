@@ -5,7 +5,6 @@ import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.exhaustive.{Gen, Prop}
 import ch.c08Testing.Gen.**
 
-
 trait Monoid[A] {
   def combine(a1: A, a2: A): A
   def empty: A
@@ -26,10 +25,8 @@ object Monoid {
   }
 
   def foldMapV[A, B](as: IndexedSeq[A])(f: A => B)(using m: Monoid[B]): B = {
-    if as.isEmpty then
-      m.empty
-    else if as.length == 1 then
-      f(as(0))
+    if as.isEmpty then m.empty
+    else if as.length == 1 then f(as(0))
     else
       val (l, r) = as.splitAt(as.length / 2)
       m.combine(foldMapV(l)(f), foldMapV(r)(f))
@@ -55,12 +52,15 @@ object Monoid {
     def combine(a1: Boolean, a2: Boolean): Boolean = a1 || a2
 
     def empty: Boolean = false
+
   val booleanAnd: Monoid[Boolean] = new Monoid[Boolean]:
     def combine(a1: Boolean, a2: Boolean): Boolean = a1 && a2
 
     def empty: Boolean = true
 
-  def parFoldMap[A, B](as: IndexedSeq[A])(f: A => B)(using monoid: Monoid[B]): Par[B] = {
+  def parFoldMap[A, B](
+      as: IndexedSeq[A],
+  )(f: A => B)(using monoid: Monoid[B]): Par[B] = {
     Par.parMap(as)(f).flatMap(bs => foldMapV(bs)(b => Par.lazyUnit(b)))
   }
 
@@ -77,10 +77,11 @@ object Monoid {
 
     def empty: List[A] = Nil
 
-  def optionMonoid[A](f: (A, A) => A): Monoid[Option[A]] = new Monoid[Option[A]]:
-    def combine(o1: Option[A], o2: Option[A]): Option[A] = o1.map2(o2)(f)
+  def optionMonoid[A](f: (A, A) => A): Monoid[Option[A]] =
+    new Monoid[Option[A]]:
+      def combine(o1: Option[A], o2: Option[A]): Option[A] = o1.map2(o2)(f)
 
-    def empty: Option[A] = None
+      def empty: Option[A] = None
 
   def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A]:
     def combine(f: A => A, g: A => A): A => A = f andThen g
@@ -96,12 +97,17 @@ object Monoid {
   given mapMergeMonoid[K, V](using mv: Monoid[V]): Monoid[Map[K, V]] with {
     def combine(a: Map[K, V], b: Map[K, V]): Map[K, V] =
       (a.keySet ++ b.keySet).foldLeft(empty)((acc, k) =>
-        acc.updated(k, mv.combine(a.getOrElse(k, mv.empty), b.getOrElse(k, mv.empty))))
+        acc.updated(
+          k,
+          mv.combine(a.getOrElse(k, mv.empty), b.getOrElse(k, mv.empty)),
+        ),
+      )
 
     def empty: Map[K, V] = Map.empty
   }
 
-  given productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)] with {
+  given productMonoid[A, B](using ma: Monoid[A], mb: Monoid[B]): Monoid[(A, B)]
+  with {
     override def combine(a1: (A, B), a2: (A, B)): (A, B) =
       (ma.combine(a1._1, a2._1), mb.combine(a1._2, a2._2))
 
@@ -129,7 +135,6 @@ object Monoid {
     as.foldMap(a => Map(a -> 1))
   }
 }
-
 
 enum WC {
   case Stub(chars: String)
