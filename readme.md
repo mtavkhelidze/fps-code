@@ -16,8 +16,10 @@ using Scala 3_
 &nbsp;&nbsp;[Chapter 07: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
 &nbsp;&nbsp;[Chapter 08: Property-based testing](#chapter-8-property-based-testing)<br/>
 &nbsp;&nbsp;[Chapter 09: Parser combinators](#chapter-9-parser-combinators)</br>
+<br/>
 [Part 3. Common structures in functional design](#part-3-common-structures-in-functional-design)<br/>
-&nbsp;&nbsp;[Chapter 10: Monoids](#chapter-10-monoids)
+&nbsp;&nbsp;[Chapter 10: Monoids](#chapter-10-monoids)<br/>
+&nbsp;&nbsp;[Chapter 11: Monads](#chapter-11-monads)<br/>
 
 ### Part One: Introduction to functional programming
 
@@ -399,5 +401,7 @@ instance_.
 * The `summon` method returns the given instance in scope for the supplied type
   parameter. If no such instance is available, compilation fails.
 * The `Foldable` typeclass describes type constructors that support computing an
-  output value by folding over their elements—that is, support `foldLeft`,
+  output value by folding over their elements — that is, support `foldLeft`,
   `foldRight`, `foldMap`, and `combineAll`.
+
+#### Chapter 11: Monads
