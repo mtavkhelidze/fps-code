@@ -11,8 +11,18 @@ trait Monad[F[_]] extends Functor[F] {
 
   def traverse[A, B](as: List[A])(f: A => F[B]): F[List[B]] =
     as.foldRight(unit(List.empty[B]))((a, acc) => f(a).map2(acc)(_ :: _))
-    
+
+  def replicateM[A](n: Int, fa: F[A]): F[List[A]] =
+    sequence(List.fill(n)(fa))
+
+  def filterM[A](as: List[A])(f: A => F[Boolean]): F[List[A]] =
+    as.foldRight(unit(List.empty[A])) { (a, acc) =>
+      f(a).flatMap(b => if b then unit(a).map2(acc)(_ :: _) else acc)
+    }
+
   extension [A](fa: F[A]) {
+    def product[B](fb: F[B]): F[(A, B)] = fa.map2(fb)((_, _))
+
     def flatMap[B](f: A => F[B]): F[B]
 
     override def map[B](f: A => B): F[B] = flatMap(a => unit(f(a)))
