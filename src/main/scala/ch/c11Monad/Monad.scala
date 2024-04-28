@@ -1,6 +1,8 @@
 package ge.zgharbi.study.fps
 package ch.c11Monad
 
+import ch.c08Testing.*
+
 trait Monad[F[_]] extends Functor[F] {
   def unit[A](a: => A): F[A]
 
@@ -13,7 +15,23 @@ trait Monad[F[_]] extends Functor[F] {
       fa.flatMap(a => fb.map(b => f(a, b)))
     }
   }
+}
 
+object Monad {
+  given genMonad: Monad[Gen] with {
+    override def unit[A](a: => A): Gen[A] = Gen.unit(a)
+
+    extension [A](fa: Gen[A])
+      override def flatMap[B](f: A => Gen[B]): Gen[B] = Gen.flatMap(fa)(f)
+  }
+
+  given optionMonad: Monad[Option] with {
+
+    override def unit[A](a: => A): Option[A] = Some(a)
+
+    extension [A](fa: Option[A])
+      override def flatMap[B](f: A => Option[B]): Option[B] = fa.flatMap(f)
+  }
 }
 
 trait Functor[F[_]] {
