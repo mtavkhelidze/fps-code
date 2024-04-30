@@ -1,16 +1,30 @@
 package ge.zgharbi.study.fps
 package ex
 
-import ch.c08Testing.Gen as NEGen
 import ch.c08Testing.exhaustive.Gen.**
 import ch.c11Monad.Monad
-import common.Common.{genInt, genRNG, genString}
+import common.Common.{genInt, genString}
 import common.PropSuite
 
 import munit.FunSuite
 
+class E11MonadLawsSuite extends PropSuite {
+  test("Option")(genInt ** genInt ** genInt) { case i ** j ** k =>
+    import Monad.optionMonad
+    val m = optionMonad.unit(i)
+
+    def f(n: Int) = Some(j + 1)
+
+    def g(n: Int) = Some(k + 2)
+
+    val expected = m.flatMap(f).flatMap(g)
+    val actual = m.flatMap(n => f(n).flatMap(g))
+    assertEquals(actual, expected, "associativity")
+  }
+}
+
 class E11MonadSuite extends PropSuite {
-  private def assertMonadLaws[F[_], A](monad: Monad[F], fn: Int => F[Int], n: Int, s: String): Unit = {
+  private def assertMonad[F[_], A](monad: Monad[F], fn: Int => F[Int], n: Int, s: String): Unit = {
     assertEquals(monad.unit(n), fn(n))
     assertFlatMap(monad, n)
     assertMap(monad, n)
@@ -37,7 +51,7 @@ class E11MonadSuite extends PropSuite {
 
   test("11.01 Monad#optionMonad")(genInt ** genString) { case n ** s =>
     import Monad.optionMonad
-    assertMonadLaws(optionMonad, Some.apply, n, s)
+    assertMonad(optionMonad, Some.apply, n, s)
   }
 
 }

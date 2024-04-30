@@ -405,3 +405,29 @@ instance_.
   `foldRight`, `foldMap`, and `combineAll`.
 
 #### Chapter 11: Monads
+
+##### Minimal sets of monadic combinators
+
+> A monad is an implementation of one of the minimal sets of monadic
+> combinators, satisfying the laws of associativity and identity.
+
+* `unit` and `flatMap`
+* `unit` and `compose`
+* `unit`, `map`, and `join`
+
+##### State monad
+
+```scala 3
+def get[S]: State[S, S] = s => (s, s)
+def set[S](s: S): State[S, Unit] = _ => ((), s)
+```
+
+> Remember that we also discovered that these combinators constitute a minimal
+> set of primitive operations for `State`. So together with the monadic
+> primitives (
+> `unit` and `flatMap`), they completely specify everything we can do with
+> the `State`
+> data type. This is true in general for monads—they all have `unit`
+> and `flatMap`,
+> and each monad brings its own set of additional primitive operations that are
+> specific to it.

@@ -1,9 +1,44 @@
 package ge.zgharbi.study.fps
 package ch.c11Monad
 
+import ch.c06State.State
 import ch.c08Testing.*
 
+
+opaque type Reader[-R, +A] = R => A
+
+object Reader {
+  given readerMonad[R]: Monad[Reader[R, _]] with {
+    override def unit[A](a: => A): Reader[R, A] = ???
+
+    extension [A](fa: Reader[R, A])
+      override def flatMap[B](f: A => Reader[R, B]): Reader[R, B] = ???
+  }
+}
+
+case class Id[A](a: A) {
+  def map[B](f: A => B): Id[B] = Id(f(a))
+
+  def flatMap[B](f: A => Id[B]): Id[B] = f(a)
+}
+
+object Id {
+  given idMonad: Monad[Id] with {
+
+    override def unit[A](a: => A): Id[A] = Id(a)
+
+    extension [A](fa: Id[A])
+      override def flatMap[B](f: A => Id[B]): Id[B] = fa.flatMap(f)
+  }
+}
+
 trait Monad[F[_]] extends Functor[F] {
+  def join[A](ffa: F[F[A]]): F[A] =
+    ffa.flatMap(identity)
+
+  def compose[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] =
+    a => f(a).flatMap(g)
+
   def unit[A](a: => A): F[A]
 
   def sequence[A](fas: List[F[A]]): F[List[A]] =
@@ -21,6 +56,9 @@ trait Monad[F[_]] extends Functor[F] {
     }
 
   extension [A](fa: F[A]) {
+    def flatMapViaCompose[B](fb: A => F[B]): F[B] =
+      compose(_ => fa, fb)(())
+
     def product[B](fb: F[B]): F[(A, B)] = fa.map2(fb)((_, _))
 
     def flatMap[B](f: A => F[B]): F[B]
@@ -34,6 +72,13 @@ trait Monad[F[_]] extends Functor[F] {
 }
 
 object Monad {
+  given stateMonad[S]: Monad[[x] =>> State[S, x]] with {
+    override def unit[A](a: => A): State[S, A] = State(s => (a, s))
+
+    extension [A](fa: State[S, A])
+      override def flatMap[B](f: A => State[S, B]): State[S, B] = State.flatMap(fa)(f)
+  }
+
   given genMonad: Monad[Gen] with {
     override def unit[A](a: => A): Gen[A] = Gen.unit(a)
 
