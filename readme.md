@@ -11,15 +11,14 @@ using Scala 3_
 &nbsp;&nbsp;[Chapter 04: Handling errors without exceptions](#chapter-4-handling-errors-without-exceptions)<br/>
 &nbsp;&nbsp;[Chapter 05: Strictness and laziness](#chapter-5-strictness-and-laziness)<br/>
 &nbsp;&nbsp;[Chapter 06: Purely functional state](#chapter-6-purely-functional-state)<br/>
-<br/>
-[Part Two: Functional design and combinator libraries](#part-two-functional-design-and-combinator-libraries)<br/>
+<br/>[Part Two: Functional design and combinator libraries](#part-two-functional-design-and-combinator-libraries)<br/>
 &nbsp;&nbsp;[Chapter 07: Purely functional parallelism](#chapter-7-purely-functional-parallelism)<br/>
 &nbsp;&nbsp;[Chapter 08: Property-based testing](#chapter-8-property-based-testing)<br/>
 &nbsp;&nbsp;[Chapter 09: Parser combinators](#chapter-9-parser-combinators)</br>
-<br/>
-[Part 3. Common structures in functional design](#part-3-common-structures-in-functional-design)<br/>
+<br/>[Part 3. Common structures in functional design](#part-3-common-structures-in-functional-design)<br/>
 &nbsp;&nbsp;[Chapter 10: Monoids](#chapter-10-monoids)<br/>
 &nbsp;&nbsp;[Chapter 11: Monads](#chapter-11-monads)<br/>
+&nbsp;&nbsp;[Chapter 12: Applicative and traversable functors](#chapter-12-applicative-and-traversable-functors)<br/>
 
 ### Part One: Introduction to functional programming
 
@@ -459,3 +458,6 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 * Providing a `Monad` instance for a type constructor has practical usefulness.
   Doing so gives access to all of the derived operations (or combinators) in
   exchange for implementing one of the minimal sets of monadic combinators.
+
+#### Chapter 12: Applicative and traversable functors
+
