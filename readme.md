@@ -406,6 +406,8 @@ instance_.
 
 #### Chapter 11: Monads
 
+> _**A monad is a monoid in a category of endofunctors**_
+
 ##### Minimal sets of monadic combinators
 
 > A monad is an implementation of one of the minimal sets of monadic
@@ -431,3 +433,29 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 > and `flatMap`,
 > and each monad brings its own set of additional primitive operations that are
 > specific to it.
+
+##### Conclusion
+
+* A **functor** is an implementation of `map` that preserves the structure of
+  the data type.
+* The **functor** laws are
+  * Identity: `x.map(a => a) == x`
+  * Composition: `x.map(f).map(g) == x.map(f andThen g)`
+* A **monad** is an implementation of one of the minimal sets of _monadic
+  combinators_, satisfying the laws of associativity and identity.
+* The minimal sets of _monadic combinators_ are
+  * `unit` and `flatMap`
+  * `unit` and `compose`
+  * `unit`, `map`, and `join`
+* The _monad laws_ are
+  * Associativity: `x.flatMap(f).flatMap(g) == x.flatMap(a => f(a).flatMap(g))`
+  * Right identity: `x.flatMap(unit) == x`
+  * Left identity: `unit(y).flatMap(f) == f(y)`
+* All **monads** are **functors**, but not all functors are monads.
+* There are monads for many of the data types encountered in this book,
+  including `Option`, `List`, `LazyList`, `Par`, and `State[S, _]`.
+* The `Monad` contract doesn’t specify what is happening between the lines, only
+  that whatever is happening satisfies the laws of associativity and identity.
+* Providing a `Monad` instance for a type constructor has practical usefulness.
+  Doing so gives access to all of the derived operations (or combinators) in
+  exchange for implementing one of the minimal sets of monadic combinators.
