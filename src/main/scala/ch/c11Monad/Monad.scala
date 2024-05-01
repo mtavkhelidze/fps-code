@@ -8,11 +8,20 @@ import ch.c08Testing.*
 opaque type Reader[-R, +A] = R => A
 
 object Reader {
-  given readerMonad[R]: Monad[Reader[R, _]] with {
-    override def unit[A](a: => A): Reader[R, A] = ???
+  def ask[R]: Reader[R, R] = r => r
+
+  def apply[R, A](f: R => A): Reader[R, A] = f
+
+  extension [R, A](ra: Reader[R, A]) {
+    def run(r: R): A = ra(r)
+  }
+
+  given readerMonad[R]: Monad[[x] =>> Reader[R, x]] with {
+    override def unit[A](a: => A): Reader[R, A] = _ => a
 
     extension [A](fa: Reader[R, A])
-      override def flatMap[B](f: A => Reader[R, B]): Reader[R, B] = ???
+      override def flatMap[B](f: A => Reader[R, B]): Reader[R, B] =
+        r => f(fa(r))(r)
   }
 }
 
