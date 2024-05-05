@@ -4,13 +4,13 @@ package ch.c12Applicative
 import ch.c11Monad.Functor
 
 trait Applicative[F[_]] extends Functor[F] {
+  def apply[A, B](fab: F[A => B])(fa: F[A]): F[B] =
+    fab.map2(fa)((fn, a) => fn(a))
   // primitive combinators
   def unit[A](a: => A): F[A]
 
-  extension [A](kore: F[A]) def map2[B, C](sore: F[B])(f: (A, B) => C): F[C]
-
-  // derived combinators
   extension [A](kore: F[A]) {
+    def map2[B, C](sore: F[B])(f: (A, B) => C): F[C]
     override def map[B](f: A => B): F[B] =
       kore.map2(unit(()))((a, _) => f(a))
 
