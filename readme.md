@@ -478,3 +478,18 @@ transparency_.
 > the possibility of failure, and so on.) We sometimes use the terms _monadic
 > effects_ or _applicative effects_ to mean types with an associated Monad or
 > Applicative instance.
+
+##### Distinction between Applicative and Monad
+
+* `Applicative` computations have a fixed structure and simply sequence effects,
+  whereas monadic computations may choose a structure dynamically, based on the
+  result of previous effects.
+* `Applicative` constructs context-free computations, while `Monad` allows for
+  context sensitivity. For example, a monadic parser allows for
+  context-sensitive grammars, while an applicative parser can only handle
+  context-free grammars.
+* `Monad` makes effects first class; they may be generated at interpretation
+  time, rather than chosen ahead of time by the program. We saw this in
+  our `Parser`
+  example, where we generated our `Parser[Row]` as part of the act of parsing
+  and used this `Parser[Row]` for subsequent parsing.
