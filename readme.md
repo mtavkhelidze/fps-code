@@ -464,3 +464,17 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 > Furthermore, we can now make `Monad[F]` a subtype of `Applicative[F]` by
 > providing the default implementation of `map2` in terms of `flatMap`. This tells
 > us that _**all monads are applicative functors**_.
+
+##### Effects in FP
+
+> Functional programmers often informally call type constructors like `Par`,
+> `Option`, `List`, `Parser`, `Gen`, and so on effects. This usage is distinct
+> from the
+> term _side effect_, which _implies some violation of referential
+transparency_.
+> These types are called effects because they augment ordinary values with extra
+> capabilities. (`Par` adds the ability to define parallel computation, `Option`
+> adds
+> the possibility of failure, and so on.) We sometimes use the terms _monadic
+> effects_ or _applicative effects_ to mean types with an associated Monad or
+> Applicative instance.
