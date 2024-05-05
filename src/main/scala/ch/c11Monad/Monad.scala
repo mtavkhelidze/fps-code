@@ -4,6 +4,8 @@ package ch.c11Monad
 import ch.c06State.State
 import ch.c08Testing.*
 
+import ge.zgharbi.study.fps.ch.c12Applicative.Applicative
+
 
 opaque type Reader[-R, +A] = R => A
 
@@ -41,7 +43,7 @@ object Id {
   }
 }
 
-trait Monad[F[_]] extends Functor[F] {
+trait Monad[F[_]] extends Applicative[F] {
   def join[A](ffa: F[F[A]]): F[A] =
     ffa.flatMap(identity)
 
@@ -49,15 +51,6 @@ trait Monad[F[_]] extends Functor[F] {
     a => f(a).flatMap(g)
 
   def unit[A](a: => A): F[A]
-
-  def traverse[A, B](as: List[A])(f: A => F[B]): F[List[B]] =
-    as.foldRight(unit(List.empty[B]))((a, acc) => f(a).map2(acc)(_ :: _))
-
-  def sequence[A](fas: List[F[A]]): F[List[A]] =
-    traverse(fas)(identity)
-
-  def replicateM[A](n: Int, fa: F[A]): F[List[A]] =
-    sequence(List.fill(n)(fa))
 
   def filterM[A](as: List[A])(f: A => F[Boolean]): F[List[A]] =
     as.foldRight(unit(List.empty[A])) { (a, acc) =>
@@ -68,7 +61,6 @@ trait Monad[F[_]] extends Functor[F] {
     def flatMapViaCompose[B](fb: A => F[B]): F[B] =
       compose(_ => fa, fb)(())
 
-    def product[B](fb: F[B]): F[(A, B)] = fa.map2(fb)((_, _))
 
     def flatMap[B](f: A => F[B]): F[B]
 
