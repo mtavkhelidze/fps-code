@@ -461,3 +461,6 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 
 #### Chapter 12: Applicative and traversable functors
 
+> Furthermore, we can now make `Monad[F]` a subtype of `Applicative[F]` by
+> providing the default implementation of `map2` in terms of `flatMap`. This tells
+> us that _**all monads are applicative functors**_.
