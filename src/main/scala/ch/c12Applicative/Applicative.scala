@@ -1,9 +1,31 @@
 package ge.zgharbi.study.fps
 package ch.c12Applicative
 
+import ch.c10MonoidFoldable.Monoid
 import ch.c11Monad.Functor
 
 object Applicative {
+  enum Validated[+E, +A] {
+    case Valid(get: A) extends Validated[Nothing, A]
+    case Invalid(error: E) extends Validated[E, Nothing]
+  }
+
+  given validatedApplicative[E: Monoid]: Applicative[Validated[E, _]] with {
+
+    import Validated.*
+
+    override def unit[A](a: => A): Validated[E, A] = Valid(a)
+
+    extension [A](kore: Validated[E, A])
+      override def map2[B, C](sore: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
+        (kore, sore) match {
+          case (Valid(k), Valid(s)) => Valid(f(k, s))
+          case (Invalid(ko), Invalid(so)) =>
+            Invalid(summon[Monoid[E]].combine(ko, so))
+          case (e@Invalid(_), _) => e
+          case (_, e@Invalid(_)) => e
+        }
+  }
   opaque type ZipList[+A] = LazyList[A]
 
   object ZipList {
