@@ -15,12 +15,24 @@ object Applicative {
     }
 
     given zipListApplicative: Applicative[ZipList] with {
-      override def unit[A](a: => A): ZipList[A] = LazyList(a)
+      override def unit[A](a: => A): ZipList[A] = LazyList.continually(a)
 
       extension [A](kore: ZipList[A])
         override def map2[B, C](sore: ZipList[B])(f: (A, B) => C): ZipList[C] =
           kore.zip(sore).map(f.tupled)
     }
+  }
+
+  given eitherMonad[E]: Monad[Either[E, _]] with {
+    override def unit[A](a: => A): Either[E, A] = Right(a)
+
+    extension [A](kore: Either[E, A]) {
+      override def flatMap[B](f: A => Either[E, B]): Either[E, B] =
+        kore match
+          case Left(value) => Left(value)
+          case Right(value) => f(value)
+    }
+
   }
 }
 
