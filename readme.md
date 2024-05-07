@@ -493,3 +493,11 @@ transparency_.
   our `Parser`
   example, where we generated our `Parser[Row]` as part of the act of parsing
   and used this `Parser[Row]` for subsequent parsing.
+
+##### Semigroup and Monoid
+
+* A `semigroup` for a type `A` has an associative `combine` operation that
+  returns an
+  `A` given two input `A` values.
+* A `monoid` is a `semigroup` with an `empty` element such
+  that `combine(empty, a) == combine(a, empty) == a for all a: A`.
