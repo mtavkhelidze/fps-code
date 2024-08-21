@@ -124,8 +124,8 @@ using Scala 3_
 - ADTs are expressed in Scala with enumerations or sealed trait hierarchies.
 - Enumerations may take type parameters, and each data constructor may take zero
   or more arguments.
-- Singly linked lists are modeled as an ADT with two data
-  constructors: `Cons(head: A, tail: List[A])` and `Nil`.
+- Singly linked lists are modeled as an ADT with two data constructors:
+  `Cons(head: A, tail: List[A])` and `Nil`.
 - Companion objects are objects with the same name as a data type. Companion
   objects have access to the private and protected members of the companion
   type.
@@ -383,8 +383,8 @@ instance_.
   using a monoid.
 * The `foldMap` function maps each element of a list to a new type and then
   combines the mapped values with a monoid instance.
-* `foldMap` can be implemented with `foldLeft` or `foldRight`, and
-  both `foldLeft` and
+* `foldMap` can be implemented with `foldLeft` or `foldRight`, and both
+  `foldLeft` and
   `foldRight` can be implemented with `foldMap`.
 * The various monoids encountered in this chapter had nothing in common besides
   their monoidal structure.
@@ -395,8 +395,8 @@ instance_.
   context parameter. Given instances are defined with the `given` keyword.
 * Context parameters can be passed explicitly with the `using` keyword at the
   call site.
-* Scala’s `given` instances and context parameters allow us to offload type-driven
-  composition to the compiler.
+* Scala’s `given` instances and context parameters allow us to offload
+  type-driven composition to the compiler.
 * The `summon` method returns the given instance in scope for the supplied type
   parameter. If no such instance is available, compilation fails.
 * The `Foldable` typeclass describes type constructors that support computing an
@@ -438,18 +438,19 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 * A **functor** is an implementation of `map` that preserves the structure of
   the data type.
 * The **functor** laws are
-  * Identity: `x.map(a => a) == x`
-  * Composition: `x.map(f).map(g) == x.map(f andThen g)`
+    * Identity: `x.map(a => a) == x`
+    * Composition: `x.map(f).map(g) == x.map(f andThen g)`
 * A **monad** is an implementation of one of the minimal sets of _monadic
   combinators_, satisfying the laws of associativity and identity.
 * The minimal sets of _monadic combinators_ are
-  * `unit` and `flatMap`
-  * `unit` and `compose`
-  * `unit`, `map`, and `join`
+    * `unit` and `flatMap`
+    * `unit` and `compose`
+    * `unit`, `map`, and `join`
 * The _monad laws_ are
-  * Associativity: `x.flatMap(f).flatMap(g) == x.flatMap(a => f(a).flatMap(g))`
-  * Right identity: `x.flatMap(unit) == x`
-  * Left identity: `unit(y).flatMap(f) == f(y)`
+    * Associativity:
+      `x.flatMap(f).flatMap(g) == x.flatMap(a => f(a).flatMap(g))`
+    * Right identity: `x.flatMap(unit) == x`
+    * Left identity: `unit(y).flatMap(f) == f(y)`
 * All **monads** are **functors**, but not all functors are monads.
 * There are monads for many of the data types encountered in this book,
   including `Option`, `List`, `LazyList`, `Par`, and `State[S, _]`.
@@ -462,7 +463,8 @@ def set[S](s: S): State[S, Unit] = _ => ((), s)
 #### Chapter 12: Applicative and traversable functors
 
 > Furthermore, we can now make `Monad[F]` a subtype of `Applicative[F]` by
-> providing the default implementation of `map2` in terms of `flatMap`. This tells
+> providing the default implementation of `map2` in terms of `flatMap`. This
+> tells
 > us that _**all monads are applicative functors**_.
 
 ##### Effects in FP
@@ -489,15 +491,33 @@ transparency_.
   context-sensitive grammars, while an applicative parser can only handle
   context-free grammars.
 * `Monad` makes effects first class; they may be generated at interpretation
-  time, rather than chosen ahead of time by the program. We saw this in
-  our `Parser`
+  time, rather than chosen ahead of time by the program. We saw this in our
+  `Parser`
   example, where we generated our `Parser[Row]` as part of the act of parsing
   and used this `Parser[Row]` for subsequent parsing.
+
+###### Advantages of Applicative Functors
+
+* In general, it’s preferable to implement combinators like traverse using as
+  few assumptions as possible. It’s better to assume a data type can provide
+  `map2` than `flatMap`. Otherwise, we’d have to write a new traverse every time
+  we encountered a type that’s Applicative but not a Monad!
+* Because Applicative is weaker than Monad, the interpreter of applicative
+  effects has more flexibility. To take just one example, consider parsing. If
+  we describe a parser without resorting to `flatMap`, this implies that the
+  structure of our grammar is determined before we begin parsing. Therefore, our
+  interpreter or runner of parsers has more information about what it’ll be
+  doing up front and is free to make additional assumptions and possibly use a
+  more efficient implementation strategy for running the parser, based on this
+  known structure. Adding `flatMap` is powerful, but it means we’re generating
+  our parsers dynamically, so the interpreter may be more limited in what it can
+  do — power comes at a cost.
+* Applicative functors compose, whereas monads (in general) don’t.
 
 ##### Semigroup and Monoid
 
 * A `semigroup` for a type `A` has an associative `combine` operation that
   returns an
   `A` given two input `A` values.
-* A `monoid` is a `semigroup` with an `empty` element such
-  that `combine(empty, a) == combine(a, empty) == a for all a: A`.
+* A `monoid` is a `semigroup` with an `empty` element such that
+  `combine(empty, a) == combine(a, empty) == a for all a: A`.

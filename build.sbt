@@ -1,12 +1,12 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "3.4.1"
+ThisBuild / scalaVersion := "3.5.0"
 
 lazy val fpsCode = (project in file("."))
   .settings(
     name := "fps-code",
     scalacOptions ++= Seq(
-      "-Ykind-projector:underscores"
+      "-Xkind-projector:underscores"
     ),
     idePackagePrefix := Some("ge.zgharbi.study.fps"),
     libraryDependencies ++= Seq(
