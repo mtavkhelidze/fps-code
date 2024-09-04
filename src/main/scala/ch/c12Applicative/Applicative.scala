@@ -30,7 +30,8 @@ object Applicative {
   }
   object Validated {
 
-    given validatedApplicative[E: Semigroup]: Applicative[Validated[E, _]] with {
+    given validatedApplicative[E: Semigroup]: Applicative[Validated[E, _]]
+    with {
       override def unit[A](a: => A): Validated[E, A] = Valid(a)
 
       extension [A](kore: Validated[E, A])
@@ -40,7 +41,7 @@ object Applicative {
           (kore, sore) match {
             case (Valid(k), Valid(s)) => Valid(f(k, s))
             case (Invalid(ko), Invalid(so)) =>
-              Invalid(summon[Monoid[E]].combine(ko, so))
+              Invalid(summon[Semigroup[E]].combine(ko, so))
             case (e @ Invalid(_), _) => e
             case (_, e @ Invalid(_)) => e
           }
@@ -78,20 +79,39 @@ object Applicative {
 }
 
 trait Applicative[F[_]] extends Functor[F] {
-  def apply[A, B](fab: F[A => B])(fa: F[A]): F[B] =
-    fab.map2(fa)((fn, a) => fn(a))
-
+  self =>
   // primitive combinators
   def unit[A](a: => A): F[A]
 
+  def product[G[_]](G: Applicative[G]): Applicative[[x] =>> (F[x], G[x])] = new:
+    def unit[A](a: => A): (F[A], G[A]) =
+      (self.unit(a), G.unit(a))
+
+    override def apply[A, B](fs: (F[A => B], G[A => B]))(
+        p: (F[A], G[A]),
+    ): (F[B], G[B]) =
+      (self.apply(fs(0))(p(0)), G.apply(fs(1))(p(1)))
+
   extension [A](kore: F[A]) {
-    def map2[B, C](sore: F[B])(f: (A, B) => C): F[C]
+    // `map2` is implemented by first currying `f` so we get a function
+    // of type `A => B => C`. This is a function that takes `A` and returns
+    // another function of type `B => C`. We could map `f.curried` over
+    // `F[A]` but let's stick with just `apply` and `unit`. We can lift
+    // `f.curried` in to `F` via `unit`, giving us `F[A => B => C]`. Then
+    // we can use `apply` along with `F[A]` to get `F[B => C]`. Passing
+    // that to `apply` along with the `F[B]` will give us the desired `F[C]`.
+    def map2[B, C](sore: F[B])(f: (A, B) => C): F[C] =
+      apply(apply(unit(f.curried))(kore))(sore)
+
     override def map[B](f: A => B): F[B] =
       kore.map2(unit(()))((a, _) => f(a))
 
     def product[B](fb: F[B]): F[(A, B)] =
       kore.map2(fb)((_, _))
   }
+
+  def apply[A, B](fab: F[A => B])(fa: F[A]): F[B] =
+    fab.map2(fa)((fn, a) => fn(a))
 
   def replicateM[A](n: Int, fa: F[A]): F[List[A]] =
     sequence(List.fill(n)(fa))
