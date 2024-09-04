@@ -10,7 +10,7 @@ lazy val fpsCode = (project in file("."))
     ),
     idePackagePrefix := Some("ge.zgharbi.study.fps"),
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test,
+      "org.scalameta" %% "munit" % "1.0.1" % Test,
     ),
   )
 

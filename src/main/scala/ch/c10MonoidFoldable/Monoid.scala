@@ -5,8 +5,10 @@ import ch.c07Parallelism.NonBlocking.Par
 import ch.c08Testing.exhaustive.{Gen, Prop}
 import ch.c08Testing.Gen.**
 
-trait Monoid[A] {
-  def combine(a1: A, a2: A): A
+trait Semigroup[A] {
+    def combine(a1: A, a2: A): A
+}
+trait Monoid[A] extends Semigroup[A] {
   def empty: A
 }
 

@@ -1,32 +1,51 @@
 package ge.zgharbi.study.fps
 package ch.c12Applicative
 
-import ch.c10MonoidFoldable.Monoid
+import ch.c10MonoidFoldable.{Monoid, Semigroup}
 import ch.c11Monad.Functor
 
 object Applicative {
+  opaque type ZipList[+A] = LazyList[A]
+
   enum Validated[+E, +A] {
     case Valid(get: A) extends Validated[Nothing, A]
     case Invalid(error: E) extends Validated[E, Nothing]
   }
 
-  given validatedApplicative[E: Monoid]: Applicative[Validated[E, _]] with {
-
-    import Validated.*
-
-    override def unit[A](a: => A): Validated[E, A] = Valid(a)
-
-    extension [A](kore: Validated[E, A])
-      override def map2[B, C](sore: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
-        (kore, sore) match {
-          case (Valid(k), Valid(s)) => Valid(f(k, s))
-          case (Invalid(ko), Invalid(so)) =>
-            Invalid(summon[Monoid[E]].combine(ko, so))
-          case (e@Invalid(_), _) => e
-          case (_, e@Invalid(_)) => e
-        }
+  case class NonEmptyList[+A](head: A, tail: List[A]) {
+    def toList: List[A] = head :: tail
   }
-  opaque type ZipList[+A] = LazyList[A]
+
+  object NonEmptyList {
+    def apply[A](head: A, tail: A*): NonEmptyList[A] =
+      NonEmptyList(head, tail.toList)
+
+    given nelSemigroup[A]: Semigroup[NonEmptyList[A]] with {
+      override def combine(
+          x: NonEmptyList[A],
+          y: NonEmptyList[A],
+      ): NonEmptyList[A] =
+        NonEmptyList(x.head, x.tail ++ y.toList)
+    }
+  }
+  object Validated {
+
+    given validatedApplicative[E: Semigroup]: Applicative[Validated[E, _]] with {
+      override def unit[A](a: => A): Validated[E, A] = Valid(a)
+
+      extension [A](kore: Validated[E, A])
+        override def map2[B, C](
+            sore: Validated[E, B],
+        )(f: (A, B) => C): Validated[E, C] =
+          (kore, sore) match {
+            case (Valid(k), Valid(s)) => Valid(f(k, s))
+            case (Invalid(ko), Invalid(so)) =>
+              Invalid(summon[Monoid[E]].combine(ko, so))
+            case (e @ Invalid(_), _) => e
+            case (_, e @ Invalid(_)) => e
+          }
+    }
+  }
 
   object ZipList {
     def apply[A](as: A*): ZipList[A] = LazyList.from(as)
@@ -61,6 +80,7 @@ object Applicative {
 trait Applicative[F[_]] extends Functor[F] {
   def apply[A, B](fab: F[A => B])(fa: F[A]): F[B] =
     fab.map2(fa)((fn, a) => fn(a))
+
   // primitive combinators
   def unit[A](a: => A): F[A]
 
@@ -82,4 +102,8 @@ trait Applicative[F[_]] extends Functor[F] {
   def traverse[A, B](as: List[A])(f: A => F[B]): F[List[B]] =
     as.foldRight(unit(List.empty[B]))((a, acc) => f(a).map2(acc)(_ :: _))
 
+  def traverseMap[K, V](kfv: Map[K, F[V]]): F[Map[K, V]] =
+    kfv.foldLeft(unit(Map.empty[K, V])) { case (acc, (k, fv)) =>
+      acc.map2(fv)((m, v) => m + (k -> v))
+    }
 }
